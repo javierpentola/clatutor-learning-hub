@@ -3,40 +3,94 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Gamepad } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface Card {
   id: number;
   value: string;
   isFlipped: boolean;
   isMatched: boolean;
+  type: "question" | "answer";
+  pairId: string;
+}
+
+interface QAPair {
+  id: string;
+  question: string;
+  answer: string;
 }
 
 const MemoryGame = () => {
+  const { code } = useParams();
   const [cards, setCards] = useState<Card[]>([]);
   const [flippedCards, setFlippedCards] = useState<Card[]>([]);
   const [matches, setMatches] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
 
-  const emojis = ["🎨", "📚", "🎭", "🎮", "🎵", "🎪", "🎯", "🎲"];
+  const { data: qaPairs, isLoading } = useQuery({
+    queryKey: ["qa_pairs", code],
+    queryFn: async () => {
+      // Primero obtenemos la unidad usando el código
+      const { data: unit, error: unitError } = await supabase
+        .from("units")
+        .select("id")
+        .eq("code", code)
+        .single();
 
-  useEffect(() => {
-    initializeGame();
-  }, []);
+      if (unitError) throw unitError;
+
+      // Luego obtenemos las preguntas y respuestas de esa unidad
+      const { data: qaData, error: qaError } = await supabase
+        .from("questions_answers")
+        .select("id, question, answer")
+        .eq("unit_id", unit.id);
+
+      if (qaError) throw qaError;
+      return qaData as QAPair[];
+    },
+    enabled: !!code,
+  });
 
   const initializeGame = () => {
-    const gameCards = [...emojis, ...emojis]
-      .sort(() => Math.random() - 0.5)
-      .map((emoji, index) => ({
-        id: index,
-        value: emoji,
+    if (!qaPairs || qaPairs.length === 0) {
+      toast("No hay preguntas y respuestas disponibles para esta unidad");
+      return;
+    }
+
+    const gameCards: Card[] = qaPairs.flatMap((pair, index) => [
+      {
+        id: index * 2,
+        value: pair.question,
         isFlipped: false,
         isMatched: false,
-      }));
-    setCards(gameCards);
+        type: "question",
+        pairId: pair.id,
+      },
+      {
+        id: index * 2 + 1,
+        value: pair.answer,
+        isFlipped: false,
+        isMatched: false,
+        type: "answer",
+        pairId: pair.id,
+      },
+    ]);
+
+    // Mezclar las cartas
+    const shuffledCards = gameCards.sort(() => Math.random() - 0.5);
+    setCards(shuffledCards);
     setMatches(0);
     setFlippedCards([]);
-    toast("¡Nuevo juego iniciado!");
+    toast("¡Nuevo juego iniciado! Encuentra las parejas de preguntas y respuestas");
   };
+
+  useEffect(() => {
+    if (qaPairs) {
+      initializeGame();
+    }
+  }, [qaPairs]);
 
   const handleCardClick = (card: Card) => {
     if (isChecking || card.isMatched || card.isFlipped || flippedCards.length >= 2) return;
@@ -51,13 +105,13 @@ const MemoryGame = () => {
 
     if (newFlippedCards.length === 2) {
       setIsChecking(true);
-      setTimeout(checkMatch, 1000);
+      setTimeout(checkMatch, 1500); // Un poco más de tiempo para leer
     }
   };
 
   const checkMatch = () => {
     const [first, second] = flippedCards;
-    if (first.value === second.value) {
+    if (first.pairId === second.pairId && first.type !== second.type) {
       const newCards = cards.map((card) =>
         card.id === first.id || card.id === second.id
           ? { ...card, isMatched: true }
@@ -65,7 +119,7 @@ const MemoryGame = () => {
       );
       setCards(newCards);
       setMatches(matches + 1);
-      if (matches + 1 === emojis.length) {
+      if (matches + 1 === qaPairs?.length) {
         toast("¡Felicidades! ¡Has completado el juego! 🎉");
       } else {
         toast("¡Encontraste una pareja! 🎯");
@@ -82,36 +136,46 @@ const MemoryGame = () => {
     setIsChecking(false);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8 flex items-center justify-center">
+        <p className="text-xl">Cargando preguntas y respuestas...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Juego de Memoria</h1>
+          <h1 className="text-3xl font-bold">Juego de Memoria - Q&A</h1>
           <Button onClick={initializeGame} className="flex items-center gap-2">
             <Gamepad className="w-5 h-5" />
             Nuevo Juego
           </Button>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {cards.map((card) => (
             <button
               key={card.id}
               onClick={() => handleCardClick(card)}
-              className={`aspect-square text-4xl p-4 rounded-lg transition-all transform duration-300 ${
+              className={`aspect-[4/3] p-4 rounded-lg transition-all transform duration-300 flex items-center justify-center text-center ${
                 card.isFlipped || card.isMatched
                   ? "bg-white shadow-lg scale-100"
                   : "bg-blue-500 shadow hover:bg-blue-600 scale-95"
               }`}
               disabled={isChecking}
             >
-              {(card.isFlipped || card.isMatched) && card.value}
+              {(card.isFlipped || card.isMatched) && (
+                <span className="text-sm md:text-base">{card.value}</span>
+              )}
             </button>
           ))}
         </div>
 
         <div className="mt-6 text-center text-lg font-semibold">
-          Parejas encontradas: {matches} de {emojis.length}
+          Parejas encontradas: {matches} de {qaPairs?.length || 0}
         </div>
       </div>
     </div>
