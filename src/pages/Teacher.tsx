@@ -55,6 +55,11 @@ const Teacher = () => {
 
   const handleCreateUnit = async () => {
     try {
+      // First, get the current user's ID
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error("No user logged in");
+
       // Generate a unique code on the server side using our SQL function
       const { data: codeData, error: codeError } = await supabase
         .rpc('generate_unique_unit_code');
@@ -66,6 +71,7 @@ const Teacher = () => {
           title,
           description,
           code: codeData,
+          teacher_id: user.id // Add the teacher_id field
         },
       ]);
 
