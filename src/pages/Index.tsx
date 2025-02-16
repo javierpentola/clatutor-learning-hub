@@ -176,17 +176,17 @@ const Index = () => {
       </div>
 
       <Dialog open={showSupportDialog} onOpenChange={setShowSupportDialog}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm duration-300 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out">
           <DialogHeader className="text-center">
-            <div className="mx-auto text-[#ea384c] mb-4">
+            <div className="mx-auto text-[#ea384c] mb-4 animate-scale-in">
               <FaHeart className="h-8 w-8" />
             </div>
-            <DialogTitle className="text-xl font-bold mb-2">Support CLA.app</DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogTitle className="text-xl font-bold mb-2 animate-fade-in">Support CLA.app</DialogTitle>
+            <DialogDescription className="text-gray-600 animate-fade-in">
               Help us make education accessible
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 pt-4">
+          <div className="space-y-3 pt-4 animate-fade-in">
             <Button className="w-full bg-[#1a365d] hover:bg-[#2a4a7f] text-white">
               Make a Donation
             </Button>
@@ -201,13 +201,13 @@ const Index = () => {
       </Dialog>
 
       <Dialog open={showTeamDialog} onOpenChange={setShowTeamDialog}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg duration-300 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out">
           <DialogHeader className="text-center">
-            <div className="mx-auto text-[#1a365d] mb-4">
+            <div className="mx-auto text-[#1a365d] mb-4 animate-scale-in">
               <FaUsers className="h-8 w-8" />
             </div>
-            <DialogTitle className="text-xl font-bold mb-2">Our Team</DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogTitle className="text-xl font-bold mb-2 animate-fade-in">Our Team</DialogTitle>
+            <DialogDescription className="text-gray-600 animate-fade-in">
               Meet the people behind CLA.app
             </DialogDescription>
           </DialogHeader>
@@ -224,36 +224,38 @@ const Index = () => {
             name: "Fisher",
             role: "Snack Coordinator",
             image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e"
-          }].map(member => <div key={member.name} className="text-center">
-                <div className="w-24 h-24 mx-auto mb-4">
+          }].map(member => (
+              <div key={member.name} className="text-center animate-fade-in">
+                <div className="w-24 h-24 mx-auto mb-4 animate-scale-in">
                   <img src={member.image} alt={member.name} className="w-full h-full object-cover rounded-full" />
                 </div>
                 <h3 className="font-bold text-[#1a365d]">{member.name}</h3>
                 <p className="text-sm text-gray-600">{member.role}</p>
-              </div>)}
+              </div>
+            ))}
           </div>
         </DialogContent>
       </Dialog>
 
       <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md duration-300 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out">
           <DialogHeader className="text-center">
-            <div className="mx-auto text-[#1a365d] mb-4">
+            <div className="mx-auto text-[#1a365d] mb-4 animate-scale-in">
               <FaDownload className="h-8 w-8" />
             </div>
-            <DialogTitle className="text-xl font-bold mb-2">Download CLA.app APK</DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogTitle className="text-xl font-bold mb-2 animate-fade-in">Download CLA.app APK</DialogTitle>
+            <DialogDescription className="text-gray-600 animate-fade-in">
               To download and install the CLA.app APK on your Android device, follow these steps:
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 pt-4">
-            <ol className="list-decimal pl-5 space-y-2 text-gray-600">
+            <ol className="list-decimal pl-5 space-y-2 text-gray-600 animate-fade-in">
               <li>Enable installation from unknown sources in your device settings.</li>
               <li>Click the download button below to start the download.</li>
               <li>Once downloaded, open the APK file to begin installation.</li>
               <li>Follow the on-screen instructions to complete the installation.</li>
             </ol>
-            <Button className="w-full bg-[#1a365d] hover:bg-[#2a4a7f] text-white mt-4">
+            <Button className="w-full bg-[#1a365d] hover:bg-[#2a4a7f] text-white mt-4 animate-fade-in">
               <FaDownload className="mr-2" />
               Download
             </Button>
