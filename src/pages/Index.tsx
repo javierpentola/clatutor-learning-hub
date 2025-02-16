@@ -1,3 +1,4 @@
+
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,7 +91,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen font-roboto">
+    <div className="min-h-screen font-roboto pb-24 md:pb-0">
       <div className="grid md:grid-cols-2 h-screen">
         <div className="relative bg-gray-50 p-8 flex flex-col">
           <Logo size={40} />
