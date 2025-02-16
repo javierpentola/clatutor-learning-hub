@@ -6,7 +6,7 @@ export const Logo = ({ className = "", size = 40 }: { className?: string; size?:
     <div className="flex items-center gap-2">
       <div className={`relative ${className}`} style={{ width: size, height: size }}>
         <img 
-          src="public/lovable-uploads/c4ed4610-c63e-4c9c-b6dc-3b900cb14f3e.png" 
+          src="/lovable-uploads/6f91541e-ba50-4ec1-9fa4-2aa4ed541c4f.png" 
           alt="CLA.app Logo" 
           className="w-full h-full object-contain" 
         />

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -34,20 +33,35 @@ const Combine = () => {
   });
 
   useEffect(() => {
-    if (!code) return;
+    if (!code) {
+      toast({
+        title: "Error",
+        description: "No unit code provided",
+        variant: "destructive",
+      });
+      navigate("/");
+      return;
+    }
     loadGame();
   }, [code]);
 
   const loadGame = async () => {
     try {
+      console.log("Loading game for code:", code);
+      
       const { data: unitData, error: unitError } = await supabase
         .from('units')
         .select('id, title')
         .eq('code', code)
         .maybeSingle();
 
-      if (unitError) throw unitError;
+      if (unitError) {
+        console.error('Unit error:', unitError);
+        throw unitError;
+      }
+      
       if (!unitData) {
+        console.log('No unit found for code:', code);
         toast({
           title: "Error",
           description: "Unit not found",
@@ -57,20 +71,30 @@ const Combine = () => {
         return;
       }
 
+      console.log('Found unit:', unitData);
+
       const { data: qaData, error: qaError } = await supabase
         .from('questions_answers')
         .select('id, question, answer')
         .eq('unit_id', unitData.id);
 
-      if (qaError) throw qaError;
+      if (qaError) {
+        console.error('QA error:', qaError);
+        throw qaError;
+      }
+      
       if (!qaData || qaData.length === 0) {
+        console.log('No questions found for unit:', unitData.id);
         toast({
           title: "No questions found",
           description: "This unit doesn't have any questions yet",
           variant: "destructive",
         });
+        setLoading(false);
         return;
       }
+
+      console.log('Found QA pairs:', qaData.length);
 
       // Create session
       const tempStudentId = crypto.randomUUID();
@@ -87,7 +111,10 @@ const Combine = () => {
         .select()
         .single();
 
-      if (sessionError) throw sessionError;
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        throw sessionError;
+      }
       
       setSessionId(sessionData.id);
       setPairs(qaData);
@@ -106,6 +133,7 @@ const Combine = () => {
         description: "Failed to load the game",
         variant: "destructive",
       });
+      setLoading(false);
     }
   };
 
@@ -175,6 +203,20 @@ const Combine = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl">Loading game...</div>
+      </div>
+    );
+  }
+
+  if (pairs.length === 0) {
+    return (
+      <div className="min-h-screen p-8">
+        <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">No Questions Available</h2>
+          <p>This unit doesn't have any questions yet.</p>
+        </div>
       </div>
     );
   }
