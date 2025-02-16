@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -32,7 +31,6 @@ const MemoryGame = () => {
   const { data: qaPairs, isLoading } = useQuery({
     queryKey: ["qa_pairs", code],
     queryFn: async () => {
-      // Primero obtenemos la unidad usando el código
       const { data: unit, error: unitError } = await supabase
         .from("units")
         .select("id")
@@ -41,7 +39,6 @@ const MemoryGame = () => {
 
       if (unitError) throw unitError;
 
-      // Luego obtenemos las preguntas y respuestas de esa unidad
       const { data: qaData, error: qaError } = await supabase
         .from("questions_answers")
         .select("id, question, answer")
@@ -78,7 +75,6 @@ const MemoryGame = () => {
       },
     ]);
 
-    // Mezclar las cartas
     const shuffledCards = gameCards.sort(() => Math.random() - 0.5);
     setCards(shuffledCards);
     setMatches(0);
@@ -105,7 +101,7 @@ const MemoryGame = () => {
 
     if (newFlippedCards.length === 2) {
       setIsChecking(true);
-      setTimeout(checkMatch, 1500); // Un poco más de tiempo para leer
+      setTimeout(checkMatch, 1500);
     }
   };
 
@@ -124,18 +120,15 @@ const MemoryGame = () => {
       return;
     }
 
-    // Verificamos si las cartas son pareja (mismo pairId y tipos diferentes)
     const isMatch = first.pairId === second.pairId && first.type !== second.type;
 
     const newCards = cards.map((card) => {
       if (card.id === first.id || card.id === second.id) {
-        if (isMatch) {
-          // Si son pareja, mantenemos las cartas volteadas y las marcamos como emparejadas
-          return { ...card, isMatched: true, isFlipped: true };
-        } else {
-          // Si no son pareja, las ocultamos
-          return { ...card, isMatched: false, isFlipped: false };
-        }
+        return {
+          ...card,
+          isMatched: isMatch,
+          isFlipped: isMatch
+        };
       }
       return card;
     });
