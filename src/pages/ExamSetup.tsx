@@ -11,11 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 type QuestionType = 
   | "multiple_choice" 
   | "true_false" 
-  | "written" 
-  | "matching" 
-  | "fill_blanks" 
-  | "sequence" 
-  | "categorization";
+  | "written";
 
 const ExamSetup = () => {
   const { code } = useParams();
@@ -28,10 +24,6 @@ const ExamSetup = () => {
     { id: "multiple_choice", label: "Multiple Choice Questions" },
     { id: "true_false", label: "True/False Questions" },
     { id: "written", label: "Written Questions" },
-    { id: "matching", label: "Matching Questions" },
-    { id: "fill_blanks", label: "Fill in the Blanks" },
-    { id: "sequence", label: "Order in Sequence" },
-    { id: "categorization", label: "Categorization by Groups" },
   ] as const;
 
   const handleTypeToggle = (type: QuestionType) => {
@@ -135,4 +127,3 @@ const ExamSetup = () => {
 };
 
 export default ExamSetup;
-
