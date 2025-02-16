@@ -69,12 +69,18 @@ const Exam = () => {
 
   const calculateScore = () => {
     let correct = 0;
+    let totalQuestions = 0;
+    
     questions.forEach(question => {
-      if (answers[question.id] === question.correct_answer) {
-        correct++;
+      if (question.question_type !== 'written') {
+        totalQuestions++;
+        if (answers[question.id] === question.correct_answer) {
+          correct++;
+        }
       }
     });
-    return (correct / questions.length) * 100;
+    
+    return totalQuestions > 0 ? (correct / totalQuestions) * 100 : 0;
   };
 
   const downloadResults = async () => {
@@ -192,13 +198,15 @@ const Exam = () => {
                     </RadioGroup>
                   )}
 
-                  {question.question_type === 'open_ended' && (
-                    <Textarea
-                      value={answers[question.id] || ""}
-                      onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                      placeholder="Type your answer here..."
-                      className="mt-2"
-                    />
+                  {question.question_type === 'written' && (
+                    <div className="space-y-4">
+                      <Textarea
+                        value={answers[question.id] || ""}
+                        onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                        placeholder="Write your answer here..."
+                        className="min-h-[150px] w-full p-4"
+                      />
+                    </div>
                   )}
                 </div>
               ))}
@@ -215,7 +223,12 @@ const Exam = () => {
         ) : (
           <div id="exam-results" className="bg-white rounded-lg shadow-md p-6">
             <h1 className="text-3xl font-bold mb-4">Exam Results</h1>
-            <p className="text-2xl mb-8">Final Score: {score?.toFixed(1)}%</p>
+            <p className="text-2xl mb-8">
+              Final Score: {score?.toFixed(1)}%
+              <span className="text-sm text-gray-500 block mt-2">
+                (Score calculated from multiple choice and true/false questions only)
+              </span>
+            </p>
 
             <div className="space-y-6">
               {questions.map((question, index) => (
@@ -224,7 +237,9 @@ const Exam = () => {
                     {index + 1}. {question.question}
                   </h3>
                   <p className="text-gray-600 mt-2">Your answer: {answers[question.id]}</p>
-                  <p className="text-gray-600">Correct answer: {question.correct_answer}</p>
+                  {question.question_type !== 'written' && (
+                    <p className="text-gray-600">Correct answer: {question.correct_answer}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -240,3 +255,4 @@ const Exam = () => {
 };
 
 export default Exam;
+
