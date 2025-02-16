@@ -46,14 +46,14 @@ const Exam = () => {
 
       if (questionsError) throw questionsError;
 
-      // Transform the data to match our ExamQuestion interface
+      // Transform the data to match our ExamQuestion interface with proper type casting
       const transformedQuestions: ExamQuestion[] = questionsData.map(q => ({
         id: q.id,
         question: q.question,
         question_type: q.question_type,
         options: q.options as string[] | null,
         correct_answer: q.correct_answer,
-        question_data: q.question_data
+        question_data: q.question_data as { blanks_text?: string } | null
       }));
 
       setQuestions(transformedQuestions);
