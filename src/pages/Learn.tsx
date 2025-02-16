@@ -2,19 +2,10 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Gamepad } from "lucide-react";
+import { Brain, Timer } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-
-interface Card {
-  id: number;
-  value: string;
-  isFlipped: boolean;
-  isMatched: boolean;
-  type: "question" | "answer";
-  pairId: string;
-}
 
 interface QAPair {
   id: string;
@@ -22,12 +13,13 @@ interface QAPair {
   answer: string;
 }
 
-const MemoryGame = () => {
+const QuizGame = () => {
   const { code } = useParams();
-  const [cards, setCards] = useState<Card[]>([]);
-  const [flippedCards, setFlippedCards] = useState<Card[]>([]);
-  const [matches, setMatches] = useState(0);
-  const [isChecking, setIsChecking] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [options, setOptions] = useState<string[]>([]);
 
   const { data: qaPairs, isLoading } = useQuery({
     queryKey: ["qa_pairs", code],
@@ -51,106 +43,93 @@ const MemoryGame = () => {
     enabled: !!code,
   });
 
-  const initializeGame = () => {
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (gameStarted && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            handleTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [gameStarted, timeLeft]);
+
+  const generateOptions = (correctAnswer: string, allAnswers: string[]) => {
+    const incorrectAnswers = allAnswers
+      .filter((answer) => answer !== correctAnswer)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+
+    const allOptions = [...incorrectAnswers, correctAnswer].sort(
+      () => Math.random() - 0.5
+    );
+    setOptions(allOptions);
+  };
+
+  const startGame = () => {
     if (!qaPairs || qaPairs.length === 0) {
       toast("No hay preguntas y respuestas disponibles para esta unidad");
       return;
     }
-
-    const gameCards: Card[] = qaPairs.flatMap((pair, index) => [
-      {
-        id: index * 2,
-        value: pair.question,
-        isFlipped: false,
-        isMatched: false,
-        type: "question",
-        pairId: pair.id,
-      },
-      {
-        id: index * 2 + 1,
-        value: pair.answer,
-        isFlipped: false,
-        isMatched: false,
-        type: "answer",
-        pairId: pair.id,
-      },
-    ]);
-
-    const shuffledCards = gameCards.sort(() => Math.random() - 0.5);
-    setCards(shuffledCards);
-    setMatches(0);
-    setFlippedCards([]);
-    toast("¡Nuevo juego iniciado! Encuentra las parejas de preguntas y respuestas");
-  };
-
-  useEffect(() => {
-    if (qaPairs) {
-      initializeGame();
-    }
-  }, [qaPairs]);
-
-  const handleCardClick = (card: Card) => {
-    if (isChecking || card.isMatched || flippedCards.length >= 2) return;
-
-    const newCards = cards.map((c) =>
-      c.id === card.id ? { ...c, isFlipped: true } : c
+    setGameStarted(true);
+    setCurrentQuestion(0);
+    setScore(0);
+    setTimeLeft(30);
+    generateOptions(
+      qaPairs[0].answer,
+      qaPairs.map((qa) => qa.answer)
     );
-    setCards(newCards);
+    toast("¡Comienza el juego! Tienes 30 segundos por pregunta");
+  };
 
-    const newFlippedCards = [...flippedCards, card];
-    setFlippedCards(newFlippedCards);
+  const handleAnswer = (selectedAnswer: string) => {
+    if (!qaPairs) return;
 
-    if (newFlippedCards.length === 2) {
-      setIsChecking(true);
-      setTimeout(checkMatch, 1000);
+    const isCorrect = selectedAnswer === qaPairs[currentQuestion].answer;
+    
+    if (isCorrect) {
+      setScore((prev) => prev + 100);
+      toast("¡Respuesta correcta! +100 puntos 🎯");
+    } else {
+      toast("Respuesta incorrecta 😢");
+    }
+
+    if (currentQuestion < qaPairs.length - 1) {
+      setCurrentQuestion((prev) => prev + 1);
+      setTimeLeft(30);
+      generateOptions(
+        qaPairs[currentQuestion + 1].answer,
+        qaPairs.map((qa) => qa.answer)
+      );
+    } else {
+      handleGameOver();
     }
   };
 
-  const checkMatch = () => {
-    // Verificamos que tengamos exactamente 2 cartas volteadas
-    if (flippedCards.length !== 2) {
-      setIsChecking(false);
-      setFlippedCards([]);
-      return;
+  const handleTimeUp = () => {
+    if (!qaPairs) return;
+    
+    toast("¡Se acabó el tiempo!");
+    if (currentQuestion < qaPairs.length - 1) {
+      setCurrentQuestion((prev) => prev + 1);
+      setTimeLeft(30);
+      generateOptions(
+        qaPairs[currentQuestion + 1].answer,
+        qaPairs.map((qa) => qa.answer)
+      );
+    } else {
+      handleGameOver();
     }
+  };
 
-    const [first, second] = flippedCards;
-
-    // Verificamos que ambas cartas existan y tengan pairId
-    if (!first || !second) {
-      setIsChecking(false);
-      setFlippedCards([]);
-      return;
-    }
-
-    const isMatch = first.pairId === second.pairId && first.type !== second.type;
-
-    const newCards = cards.map((card) => {
-      if (card.id === first.id || card.id === second.id) {
-        if (isMatch) {
-          // Si es una pareja correcta, las marcamos como matched y no se mostrarán
-          return { ...card, isMatched: true };
-        } else {
-          // Si no son pareja, vuelven a su estado original (azules)
-          return { ...card, isFlipped: false };
-        }
-      }
-      return card;
-    });
-
-    setCards(newCards);
-
-    if (isMatch) {
-      setMatches((prev) => prev + 1);
-      if (matches + 1 === qaPairs?.length) {
-        toast("¡Felicidades! ¡Has completado el juego! 🎉");
-      } else {
-        toast("¡Encontraste una pareja! 🎯");
-      }
-    }
-
-    setFlippedCards([]);
-    setIsChecking(false);
+  const handleGameOver = () => {
+    setGameStarted(false);
+    toast(`¡Juego terminado! Puntuación final: ${score} puntos`);
   };
 
   if (isLoading) {
@@ -165,40 +144,61 @@ const MemoryGame = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Juego de Memoria - Q&A</h1>
-          <Button onClick={initializeGame} className="flex items-center gap-2">
-            <Gamepad className="w-5 h-5" />
-            Nuevo Juego
-          </Button>
+          <h1 className="text-3xl font-bold">Quiz Game</h1>
+          {!gameStarted && (
+            <Button onClick={startGame} className="flex items-center gap-2">
+              <Brain className="w-5 h-5" />
+              Comenzar Juego
+            </Button>
+          )}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {cards.map((card) => (
-            !card.isMatched && (
-              <button
-                key={card.id}
-                onClick={() => handleCardClick(card)}
-                className={`aspect-[4/3] p-4 rounded-lg transition-all transform duration-300 flex items-center justify-center text-center ${
-                  card.isFlipped
-                    ? "bg-white shadow-lg scale-100"
-                    : "bg-blue-500 shadow hover:bg-blue-600 scale-95"
-                }`}
-                disabled={isChecking}
-              >
-                {card.isFlipped && (
-                  <span className="text-sm md:text-base">{card.value}</span>
-                )}
-              </button>
-            )
-          ))}
-        </div>
+        {gameStarted && qaPairs && (
+          <div className="space-y-8">
+            <div className="flex justify-between items-center">
+              <div className="text-xl font-semibold">
+                Pregunta {currentQuestion + 1} de {qaPairs.length}
+              </div>
+              <div className="flex items-center gap-2 text-xl font-semibold">
+                <Timer className="w-5 h-5" />
+                {timeLeft}s
+              </div>
+            </div>
 
-        <div className="mt-6 text-center text-lg font-semibold">
-          Parejas encontradas: {matches} de {qaPairs?.length || 0}
-        </div>
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-xl mb-6">
+                {qaPairs[currentQuestion].question}
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {options.map((option, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => handleAnswer(option)}
+                    variant="outline"
+                    className="p-4 text-left h-auto"
+                  >
+                    {option}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="text-center text-2xl font-bold">
+              Puntuación: {score}
+            </div>
+          </div>
+        )}
+
+        {!gameStarted && score > 0 && (
+          <div className="text-center mt-8">
+            <h2 className="text-2xl font-bold mb-4">Juego Terminado</h2>
+            <p className="text-xl">Puntuación final: {score} puntos</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default MemoryGame;
+export default QuizGame;
