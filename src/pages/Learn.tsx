@@ -1,196 +1,121 @@
 
-import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, Text } from "fabric";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Pencil, Square, Circle as CircleIcon, Minus, Type, Trash2, Download } from "lucide-react";
+import { Gamepad } from "lucide-react";
 
-type Shape = "rectangle" | "circle" | "line" | "text" | "draw";
+interface Card {
+  id: number;
+  value: string;
+  isFlipped: boolean;
+  isMatched: boolean;
+}
 
-const Draw = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [canvas, setCanvas] = useState<Canvas | null>(null);
-  const [selectedShape, setSelectedShape] = useState<Shape>("draw");
-  const [text, setText] = useState("");
+const MemoryGame = () => {
+  const [cards, setCards] = useState<Card[]>([]);
+  const [flippedCards, setFlippedCards] = useState<Card[]>([]);
+  const [matches, setMatches] = useState(0);
+  const [isChecking, setIsChecking] = useState(false);
+
+  const emojis = ["🎨", "📚", "🎭", "🎮", "🎵", "🎪", "🎯", "🎲"];
 
   useEffect(() => {
-    if (!canvasRef.current) return;
-
-    const fabricCanvas = new FabricCanvas(canvasRef.current, {
-      width: 800,
-      height: 600,
-      backgroundColor: "#ffffff",
-      isDrawingMode: true,
-    });
-
-    if (fabricCanvas.freeDrawingBrush) {
-      fabricCanvas.freeDrawingBrush.color = "#495057";
-      fabricCanvas.freeDrawingBrush.width = 2;
-    }
-
-    setCanvas(fabricCanvas);
-
-    return () => {
-      fabricCanvas.dispose();
-    };
+    initializeGame();
   }, []);
 
-  useEffect(() => {
-    if (!canvas) return;
-
-    canvas.isDrawingMode = selectedShape === "draw";
-    canvas.selection = !canvas.isDrawingMode;
-
-    if (canvas.isDrawingMode && canvas.freeDrawingBrush) {
-      canvas.freeDrawingBrush.color = "#495057";
-      canvas.freeDrawingBrush.width = 2;
-    }
-  }, [selectedShape, canvas]);
-
-  const handleCanvasClick = (e: MouseEvent) => {
-    if (!canvas || !canvasRef.current || selectedShape === "draw") return;
-
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    if (selectedShape === "rectangle") {
-      const rect = new Rect({
-        left: x - 50,
-        top: y - 25,
-        fill: "#e9ecef",
-        width: 100,
-        height: 50,
-        stroke: "#495057",
-        strokeWidth: 2,
-        rx: 8,
-        ry: 8,
-      });
-      canvas.add(rect);
-    } else if (selectedShape === "circle") {
-      const circle = new Circle({
-        left: x - 25,
-        top: y - 25,
-        fill: "#e9ecef",
-        radius: 25,
-        stroke: "#495057",
-        strokeWidth: 2,
-      });
-      canvas.add(circle);
-    } else if (selectedShape === "text" && text) {
-      const fabricText = new Text(text, {
-        left: x,
-        top: y,
-        fontSize: 20,
-        fill: "#212529",
-      });
-      canvas.add(fabricText);
-    }
-
-    canvas.renderAll();
+  const initializeGame = () => {
+    const gameCards = [...emojis, ...emojis]
+      .sort(() => Math.random() - 0.5)
+      .map((emoji, index) => ({
+        id: index,
+        value: emoji,
+        isFlipped: false,
+        isMatched: false,
+      }));
+    setCards(gameCards);
+    setMatches(0);
+    setFlippedCards([]);
+    toast("¡Nuevo juego iniciado!");
   };
 
-  useEffect(() => {
-    const canvasElement = canvasRef.current;
-    if (!canvasElement) return;
+  const handleCardClick = (card: Card) => {
+    if (isChecking || card.isMatched || card.isFlipped || flippedCards.length >= 2) return;
 
-    canvasElement.addEventListener("click", handleCanvasClick);
-    return () => {
-      canvasElement.removeEventListener("click", handleCanvasClick);
-    };
-  }, [canvas, selectedShape, text]);
+    const newCards = cards.map((c) =>
+      c.id === card.id ? { ...c, isFlipped: true } : c
+    );
+    setCards(newCards);
 
-  const handleClear = () => {
-    if (!canvas) return;
-    canvas.clear();
-    canvas.backgroundColor = "#ffffff";
-    canvas.renderAll();
-    toast("¡Lienzo limpiado!");
+    const newFlippedCards = [...flippedCards, card];
+    setFlippedCards(newFlippedCards);
+
+    if (newFlippedCards.length === 2) {
+      setIsChecking(true);
+      setTimeout(checkMatch, 1000);
+    }
   };
 
-  const handleDownload = () => {
-    if (!canvas) return;
-    const dataUrl = canvas.toDataURL({
-      format: "png",
-      quality: 1,
-      multiplier: 1
-    });
-    
-    const link = document.createElement("a");
-    link.download = "notas.png";
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast("¡Notas descargadas!");
+  const checkMatch = () => {
+    const [first, second] = flippedCards;
+    if (first.value === second.value) {
+      const newCards = cards.map((card) =>
+        card.id === first.id || card.id === second.id
+          ? { ...card, isMatched: true }
+          : card
+      );
+      setCards(newCards);
+      setMatches(matches + 1);
+      if (matches + 1 === emojis.length) {
+        toast("¡Felicidades! ¡Has completado el juego! 🎉");
+      } else {
+        toast("¡Encontraste una pareja! 🎯");
+      }
+    } else {
+      const newCards = cards.map((card) =>
+        card.id === first.id || card.id === second.id
+          ? { ...card, isFlipped: false }
+          : card
+      );
+      setCards(newCards);
+    }
+    setFlippedCards([]);
+    setIsChecking(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Modo Dibujo - Toma notas visuales</h1>
-        
-        <div className="mb-6 flex gap-4 items-end">
-          <div className="space-y-2">
-            <Label htmlFor="text">Texto</Label>
-            <Input
-              id="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Escribe el texto a añadir"
-              className="w-64"
-            />
-          </div>
-          
-          <div className="space-x-2">
-            <Button
-              variant={selectedShape === "draw" ? "default" : "outline"}
-              onClick={() => setSelectedShape("draw")}
-            >
-              <Pencil className="w-4 h-4 mr-2" />
-              Dibujo Libre
-            </Button>
-            <Button
-              variant={selectedShape === "rectangle" ? "default" : "outline"}
-              onClick={() => setSelectedShape("rectangle")}
-            >
-              <Square className="w-4 h-4 mr-2" />
-              Rectángulo
-            </Button>
-            <Button
-              variant={selectedShape === "circle" ? "default" : "outline"}
-              onClick={() => setSelectedShape("circle")}
-            >
-              <CircleIcon className="w-4 h-4 mr-2" />
-              Círculo
-            </Button>
-            <Button
-              variant={selectedShape === "text" ? "default" : "outline"}
-              onClick={() => setSelectedShape("text")}
-            >
-              <Type className="w-4 h-4 mr-2" />
-              Texto
-            </Button>
-            <Button variant="outline" onClick={handleClear}>
-              <Trash2 className="w-4 h-4 mr-2" />
-              Limpiar
-            </Button>
-            <Button variant="outline" onClick={handleDownload}>
-              <Download className="w-4 h-4 mr-2" />
-              Descargar
-            </Button>
-          </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Juego de Memoria</h1>
+          <Button onClick={initializeGame} className="flex items-center gap-2">
+            <Gamepad className="w-5 h-5" />
+            Nuevo Juego
+          </Button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-4">
-          <canvas ref={canvasRef} className="border border-gray-200 rounded-lg w-full" />
+        <div className="grid grid-cols-4 gap-4">
+          {cards.map((card) => (
+            <button
+              key={card.id}
+              onClick={() => handleCardClick(card)}
+              className={`aspect-square text-4xl p-4 rounded-lg transition-all transform duration-300 ${
+                card.isFlipped || card.isMatched
+                  ? "bg-white shadow-lg scale-100"
+                  : "bg-blue-500 shadow hover:bg-blue-600 scale-95"
+              }`}
+              disabled={isChecking}
+            >
+              {(card.isFlipped || card.isMatched) && card.value}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 text-center text-lg font-semibold">
+          Parejas encontradas: {matches} de {emojis.length}
         </div>
       </div>
     </div>
   );
 };
 
-export default Draw;
+export default MemoryGame;
