@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -89,7 +90,7 @@ const MemoryGame = () => {
   }, [qaPairs]);
 
   const handleCardClick = (card: Card) => {
-    if (isChecking || card.isMatched || card.isFlipped || flippedCards.length >= 2) return;
+    if (isChecking || card.isMatched || flippedCards.length >= 2) return;
 
     const newCards = cards.map((c) =>
       c.id === card.id ? { ...c, isFlipped: true } : c
@@ -101,34 +102,24 @@ const MemoryGame = () => {
 
     if (newFlippedCards.length === 2) {
       setIsChecking(true);
-      setTimeout(checkMatch, 1500);
+      setTimeout(checkMatch, 1000);
     }
   };
 
   const checkMatch = () => {
-    if (flippedCards.length !== 2) {
-      setIsChecking(false);
-      setFlippedCards([]);
-      return;
-    }
-
     const [first, second] = flippedCards;
-
-    if (!first || !second || !first.pairId || !second.pairId) {
-      setIsChecking(false);
-      setFlippedCards([]);
-      return;
-    }
 
     const isMatch = first.pairId === second.pairId && first.type !== second.type;
 
     const newCards = cards.map((card) => {
       if (card.id === first.id || card.id === second.id) {
-        return {
-          ...card,
-          isMatched: isMatch,
-          isFlipped: isMatch
-        };
+        if (isMatch) {
+          // Si es una pareja correcta, las marcamos como matched y no se mostrarán
+          return { ...card, isMatched: true, isFlipped: false };
+        } else {
+          // Si no son pareja, vuelven a ser azules
+          return { ...card, isMatched: false, isFlipped: false };
+        }
       }
       return card;
     });
@@ -169,20 +160,22 @@ const MemoryGame = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {cards.map((card) => (
-            <button
-              key={card.id}
-              onClick={() => handleCardClick(card)}
-              className={`aspect-[4/3] p-4 rounded-lg transition-all transform duration-300 flex items-center justify-center text-center ${
-                card.isFlipped || card.isMatched
-                  ? "bg-white shadow-lg scale-100"
-                  : "bg-blue-500 shadow hover:bg-blue-600 scale-95"
-              }`}
-              disabled={isChecking}
-            >
-              {(card.isFlipped || card.isMatched) && (
-                <span className="text-sm md:text-base">{card.value}</span>
-              )}
-            </button>
+            !card.isMatched && (
+              <button
+                key={card.id}
+                onClick={() => handleCardClick(card)}
+                className={`aspect-[4/3] p-4 rounded-lg transition-all transform duration-300 flex items-center justify-center text-center ${
+                  card.isFlipped
+                    ? "bg-white shadow-lg scale-100"
+                    : "bg-blue-500 shadow hover:bg-blue-600 scale-95"
+                }`}
+                disabled={isChecking}
+              >
+                {card.isFlipped && (
+                  <span className="text-sm md:text-base">{card.value}</span>
+                )}
+              </button>
+            )
           ))}
         </div>
 
