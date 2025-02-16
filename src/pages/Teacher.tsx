@@ -36,8 +36,16 @@ const Teacher = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isExiting, setIsExiting] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleGoBack = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      navigate(-1);
+    }, 300);
+  };
 
   const { data: units, refetch: refetchUnits } = useQuery({
     queryKey: ["units"],
@@ -101,19 +109,19 @@ const Teacher = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className={`min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-opacity duration-300 ${isExiting ? 'opacity-0' : 'opacity-100'}`}>
       <div className="container mx-auto py-12 px-4">
         <Button
           variant="ghost"
           size="sm"
-          className="mb-6"
-          onClick={() => navigate(-1)}
+          className="mb-6 animate-fade-in"
+          onClick={handleGoBack}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
         
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 animate-fade-in">
           <div className="flex flex-col gap-4">
             <Button 
               onClick={() => setIsCreateOpen(true)} 
