@@ -124,16 +124,17 @@ const MemoryGame = () => {
       return;
     }
 
+    // Verificamos si las cartas son pareja (mismo pairId y tipos diferentes)
     const isMatch = first.pairId === second.pairId && first.type !== second.type;
 
     const newCards = cards.map((card) => {
       if (card.id === first.id || card.id === second.id) {
         if (isMatch) {
-          // Si hay coincidencia, marcamos las cartas como emparejadas y volteadas
+          // Si son pareja, mantenemos las cartas volteadas y las marcamos como emparejadas
           return { ...card, isMatched: true, isFlipped: true };
         } else {
-          // Si no hay coincidencia, las volvemos a ocultar
-          return { ...card, isFlipped: false };
+          // Si no son pareja, las ocultamos
+          return { ...card, isMatched: false, isFlipped: false };
         }
       }
       return card;
@@ -142,7 +143,7 @@ const MemoryGame = () => {
     setCards(newCards);
 
     if (isMatch) {
-      setMatches(matches + 1);
+      setMatches((prev) => prev + 1);
       if (matches + 1 === qaPairs?.length) {
         toast("¡Felicidades! ¡Has completado el juego! 🎉");
       } else {
