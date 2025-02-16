@@ -111,30 +111,36 @@ export type Database = {
           correct_answer: string
           created_at: string | null
           exam_session_id: string
+          explanation: string | null
           id: string
           options: Json | null
           original_qa_id: string | null
           question: string
+          question_data: Json | null
           question_type: string
         }
         Insert: {
           correct_answer: string
           created_at?: string | null
           exam_session_id: string
+          explanation?: string | null
           id?: string
           options?: Json | null
           original_qa_id?: string | null
           question: string
+          question_data?: Json | null
           question_type: string
         }
         Update: {
           correct_answer?: string
           created_at?: string | null
           exam_session_id?: string
+          explanation?: string | null
           id?: string
           options?: Json | null
           original_qa_id?: string | null
           question?: string
+          question_data?: Json | null
           question_type?: string
         }
         Relationships: [
