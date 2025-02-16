@@ -95,7 +95,7 @@ const Index = () => {
   return <div className="min-h-screen font-roboto pb-24 md:pb-0">
       <div className="grid md:grid-cols-2 h-screen">
         <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg mx-0">
-          <div className="flex justify-center md:justify-start">
+          <div className="flex justify-center md:justify-start mb-12">
             <Logo size={40} />
           </div>
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
@@ -130,7 +130,7 @@ const Index = () => {
         </div>
 
         <div className="relative bg-[#1a365d] p-8 flex flex-col">
-          <div className="flex justify-center md:justify-start">
+          <div className="flex justify-center md:justify-start mb-12">
             <Logo size={40} className="filter brightness-0 invert" textClassName="text-white" />
           </div>
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
