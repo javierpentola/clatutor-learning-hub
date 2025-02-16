@@ -1,4 +1,3 @@
-
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,16 +5,9 @@ import { FaHeart, FaDownload, FaUsers } from "react-icons/fa";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-
 const Index = () => {
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [showTeamDialog, setShowTeamDialog] = useState(false);
@@ -27,27 +19,27 @@ const Index = () => {
   const [showMobileButtons, setShowMobileButtons] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const isAtBottom = window.innerHeight + currentScrollY >= document.documentElement.scrollHeight - 100;
       const isScrollingUp = currentScrollY < lastScrollY;
-
       setShowMobileButtons(isAtBottom && !isScrollingUp);
       setLastScrollY(currentScrollY);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
-
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const {
+          error
+        } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -57,10 +49,12 @@ const Index = () => {
         if (error) throw error;
         toast({
           title: "Success",
-          description: "Please check your email to verify your account",
+          description: "Please check your email to verify your account"
         });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const {
+          error
+        } = await supabase.auth.signInWithPassword({
           email,
           password
         });
@@ -75,25 +69,21 @@ const Index = () => {
       });
     }
   };
-
   const handleJoinClass = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!classCode.trim()) {
       toast({
         title: "Error",
         description: "Please enter a class code",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     navigate(`/student/${classCode}`);
   };
-
-  return (
-    <div className="min-h-screen font-roboto pb-24 md:pb-0">
+  return <div className="min-h-screen font-roboto pb-24 md:pb-0">
       <div className="grid md:grid-cols-2 h-screen">
-        <div className="relative bg-gray-50 p-8 flex flex-col">
+        <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg mx-0">
           <Logo size={40} />
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
             <div className="text-center w-full">
@@ -106,41 +96,19 @@ const Index = () => {
               <form onSubmit={handleAuth} className="space-y-4">
                 <div className="text-left">
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="w-full h-12"
-                  />
+                  <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" required className="w-full h-12" />
                 </div>
                 <div className="text-left">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    className="w-full h-12"
-                  />
+                  <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" required className="w-full h-12" />
                 </div>
-                <Button 
-                  type="submit"
-                  className="w-full bg-[#1a365d] hover:bg-[#2a4a7f] text-white h-12"
-                >
+                <Button type="submit" className="w-full bg-[#1a365d] hover:bg-[#2a4a7f] text-white h-12">
                   {isSignUp ? "Sign Up" : "Sign In"}
                 </Button>
               </form>
               <p className="mt-4 text-gray-600">
                 {isSignUp ? "Already have an account? " : "Don't have an account? "}
-                <button
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  className="text-[#1a365d] hover:underline"
-                >
+                <button onClick={() => setIsSignUp(!isSignUp)} className="text-[#1a365d] hover:underline">
                   {isSignUp ? "Sign In" : "Sign Up"}
                 </button>
               </p>
@@ -157,17 +125,9 @@ const Index = () => {
               <form onSubmit={handleJoinClass} className="space-y-4">
                 <div className="text-left">
                   <label className="text-white mb-2 block">Class Code</label>
-                  <Input 
-                    value={classCode}
-                    onChange={(e) => setClassCode(e.target.value)}
-                    placeholder="Enter class code"
-                    className="w-full h-12 bg-[#2a4a7f] border-[#2a4a7f] text-white placeholder:text-gray-400"
-                  />
+                  <Input value={classCode} onChange={e => setClassCode(e.target.value)} placeholder="Enter class code" className="w-full h-12 bg-[#2a4a7f] border-[#2a4a7f] text-white placeholder:text-gray-400" />
                 </div>
-                <Button 
-                  type="submit"
-                  className="w-full bg-white hover:bg-gray-100 text-[#1a365d] h-12 font-medium"
-                >
+                <Button type="submit" className="w-full bg-white hover:bg-gray-100 text-[#1a365d] h-12 font-medium">
                   Join Class
                 </Button>
               </form>
@@ -175,25 +135,13 @@ const Index = () => {
           </div>
 
           <div className="hidden md:flex absolute bottom-8 right-8 flex-col gap-4">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowSupportDialog(true)}
-              className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white"
-            >
+            <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
               <FaHeart className="h-5 w-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowTeamDialog(true)}
-              className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white"
-            >
+            <Button variant="outline" onClick={() => setShowTeamDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
               <FaUsers className="h-5 w-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowDownloadDialog(true)}
-              className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white"
-            >
+            <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
               <FaDownload className="h-5 w-5" />
             </Button>
           </div>
@@ -201,25 +149,13 @@ const Index = () => {
       </div>
 
       <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-center gap-4 shadow-lg transition-all duration-500 ease-in-out ${showMobileButtons ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'}`}>
-        <Button 
-          variant="outline" 
-          onClick={() => setShowSupportDialog(true)}
-          className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]"
-        >
+        <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]">
           <FaHeart className="h-5 w-5" />
         </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => setShowTeamDialog(true)}
-          className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]"
-        >
+        <Button variant="outline" onClick={() => setShowTeamDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]">
           <FaUsers className="h-5 w-5" />
         </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => setShowDownloadDialog(true)}
-          className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]"
-        >
+        <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]">
           <FaDownload className="h-5 w-5" />
         </Button>
       </div>
@@ -261,19 +197,25 @@ const Index = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-3 gap-6 pt-8">
-            {[
-              { name: "Otto", role: "Chief Happiness Officer", image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" },
-              { name: "Kenji", role: "Security Manager", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" },
-              { name: "Fisher", role: "Snack Coordinator", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e" }
-            ].map((member) => (
-              <div key={member.name} className="text-center">
+            {[{
+            name: "Otto",
+            role: "Chief Happiness Officer",
+            image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952"
+          }, {
+            name: "Kenji",
+            role: "Security Manager",
+            image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+          }, {
+            name: "Fisher",
+            role: "Snack Coordinator",
+            image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e"
+          }].map(member => <div key={member.name} className="text-center">
                 <div className="w-24 h-24 mx-auto mb-4">
                   <img src={member.image} alt={member.name} className="w-full h-full object-cover rounded-full" />
                 </div>
                 <h3 className="font-bold text-[#1a365d]">{member.name}</h3>
                 <p className="text-sm text-gray-600">{member.role}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </DialogContent>
       </Dialog>
@@ -303,8 +245,6 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
