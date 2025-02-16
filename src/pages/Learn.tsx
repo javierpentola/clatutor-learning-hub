@@ -141,12 +141,12 @@ const QuizGame = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 py-6 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Quiz Game</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-center sm:text-left">Quiz Game</h1>
           {!gameStarted && (
-            <Button onClick={startGame} className="flex items-center gap-2">
+            <Button onClick={startGame} className="w-full sm:w-auto flex items-center justify-center gap-2">
               <Brain className="w-5 h-5" />
               Comenzar Juego
             </Button>
@@ -154,29 +154,29 @@ const QuizGame = () => {
         </div>
 
         {gameStarted && qaPairs && (
-          <div className="space-y-8">
-            <div className="flex justify-between items-center">
-              <div className="text-xl font-semibold">
+          <div className="space-y-6 md:space-y-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/50 p-4 rounded-lg">
+              <div className="text-lg md:text-xl font-semibold text-center sm:text-left">
                 Pregunta {currentQuestion + 1} de {qaPairs.length}
               </div>
-              <div className="flex items-center gap-2 text-xl font-semibold">
+              <div className="flex items-center gap-2 text-lg md:text-xl font-semibold">
                 <Timer className="w-5 h-5" />
                 {timeLeft}s
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl mb-6">
+            <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+              <h2 className="text-lg md:text-xl mb-4 md:mb-6 text-center sm:text-left">
                 {qaPairs[currentQuestion].question}
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 md:gap-4">
                 {options.map((option, index) => (
                   <Button
                     key={index}
                     onClick={() => handleAnswer(option)}
                     variant="outline"
-                    className="p-4 text-left h-auto"
+                    className="p-4 text-left h-auto text-sm md:text-base break-words min-h-[60px] transition-all hover:scale-[1.02]"
                   >
                     {option}
                   </Button>
@@ -184,16 +184,16 @@ const QuizGame = () => {
               </div>
             </div>
 
-            <div className="text-center text-2xl font-bold">
+            <div className="text-center text-xl md:text-2xl font-bold bg-white/50 p-4 rounded-lg">
               Puntuación: {score}
             </div>
           </div>
         )}
 
         {!gameStarted && score > 0 && (
-          <div className="text-center mt-8">
-            <h2 className="text-2xl font-bold mb-4">Juego Terminado</h2>
-            <p className="text-xl">Puntuación final: {score} puntos</p>
+          <div className="text-center mt-8 bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-xl md:text-2xl font-bold mb-4">Juego Terminado</h2>
+            <p className="text-lg md:text-xl">Puntuación final: {score} puntos</p>
           </div>
         )}
       </div>
