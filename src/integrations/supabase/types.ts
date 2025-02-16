@@ -142,6 +142,38 @@ export type Database = {
         }
         Relationships: []
       }
+      questions_answers: {
+        Row: {
+          answer: string
+          created_at: string | null
+          id: string
+          question: string
+          unit_id: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string | null
+          id?: string
+          question: string
+          unit_id: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string | null
+          id?: string
+          question?: string
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_answers_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_class_enrollments: {
         Row: {
           class_id: string | null
@@ -205,6 +237,44 @@ export type Database = {
         }
         Relationships: []
       }
+      units: {
+        Row: {
+          code: string
+          created_at: string | null
+          description: string | null
+          id: string
+          teacher_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          teacher_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          teacher_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "units_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string | null
@@ -237,7 +307,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_unit_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
