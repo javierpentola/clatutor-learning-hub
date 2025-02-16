@@ -1,3 +1,4 @@
+
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,8 +160,8 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="absolute bottom-8 right-8 flex flex-col gap-4">
+          {/* Action Buttons - Ahora son responsivos */}
+          <div className="hidden md:flex absolute bottom-8 right-8 flex-col gap-4">
             <Button 
               variant="outline" 
               onClick={() => setShowSupportDialog(true)}
@@ -184,6 +185,31 @@ const Index = () => {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Botones para móvil al final de la página */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-center gap-4 shadow-lg">
+        <Button 
+          variant="outline" 
+          onClick={() => setShowSupportDialog(true)}
+          className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]"
+        >
+          <FaHeart className="h-5 w-5" />
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => setShowTeamDialog(true)}
+          className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]"
+        >
+          <FaUsers className="h-5 w-5" />
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => setShowDownloadDialog(true)}
+          className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]"
+        >
+          <FaDownload className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Support Dialog */}
