@@ -1,4 +1,3 @@
-
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,23 +64,23 @@ const Index = () => {
           {/* Action Buttons */}
           <div className="absolute bottom-8 right-8 flex flex-col gap-4">
             <Button 
-              variant="ghost" 
+              variant="outline" 
               onClick={() => setShowSupportDialog(true)}
-              className="text-white hover:bg-[#2a4a7f] rounded-full w-12 h-12 p-0"
+              className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white"
             >
               <FaHeart className="h-5 w-5" />
             </Button>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               onClick={() => setShowTeamDialog(true)}
-              className="text-white hover:bg-[#2a4a7f] rounded-full w-12 h-12 p-0"
+              className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white"
             >
               <FaUsers className="h-5 w-5" />
             </Button>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               onClick={() => setShowDownloadDialog(true)}
-              className="text-white hover:bg-[#2a4a7f] rounded-full w-12 h-12 p-0"
+              className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white"
             >
               <FaDownload className="h-5 w-5" />
             </Button>
