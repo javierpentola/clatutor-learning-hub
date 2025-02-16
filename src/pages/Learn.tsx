@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, IEvent } from "fabric";
+import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, Text, IEvent } from "fabric";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -69,7 +69,7 @@ const Learn = () => {
       });
       canvas.add(circle);
     } else if (selectedShape === "text" && text) {
-      const fabricText = new fabric.Text(text, {
+      const fabricText = new Text(text, {
         left: pointer.x,
         top: pointer.y,
         fontSize: 20,
