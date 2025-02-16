@@ -1,5 +1,5 @@
 
-import { BookOpen, Brain, QuestionMarkCircle, Shuffle } from "lucide-react";
+import { BookOpen, Brain, HelpCircle, Shuffle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Student = () => {
@@ -31,7 +31,7 @@ const Student = () => {
             className="bg-[#8E9196] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
             onClick={() => navigate("/exam")}
           >
-            <QuestionMarkCircle className="w-8 h-8 mb-4" />
+            <HelpCircle className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Exam</span>
           </button>
 
