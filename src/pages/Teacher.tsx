@@ -109,18 +109,18 @@ const Teacher = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-opacity duration-300 ${isExiting ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-opacity duration-300 ${isExiting ? 'opacity-0' : 'opacity-100'} relative`}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="absolute top-4 left-4 mb-6 animate-fade-in border border-gray-300 dark:border-gray-600 hover:border-primary"
+        onClick={handleGoBack}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
+      
       <div className="container mx-auto py-12 px-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mb-6 animate-fade-in"
-          onClick={handleGoBack}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-        
         <div className="flex flex-col gap-8 animate-fade-in">
           <div className="flex flex-col gap-4">
             <Button 
