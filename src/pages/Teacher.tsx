@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, Plus, Copy } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,14 +53,20 @@ const Teacher = () => {
     },
   });
 
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Code copied",
+      description: "Unit code has been copied to clipboard",
+    });
+  };
+
   const handleCreateUnit = async () => {
     try {
-      // First, get the current user's ID
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) throw new Error("No user logged in");
 
-      // Generate a unique code on the server side using our SQL function
       const { data: codeData, error: codeError } = await supabase
         .rpc('generate_unique_unit_code');
       
@@ -99,14 +105,18 @@ const Teacher = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto py-12 px-4">
         <div className="flex flex-col gap-8">
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="order-2 sm:order-1">
               <h1 className="text-4xl font-bold tracking-tight">Your Units</h1>
               <p className="text-muted-foreground mt-2">
                 Create and manage your teaching units
               </p>
             </div>
-            <Button onClick={() => setIsCreateOpen(true)} size="lg" className="gap-2">
+            <Button 
+              onClick={() => setIsCreateOpen(true)} 
+              size="lg" 
+              className="gap-2 order-1 sm:order-2"
+            >
               <Plus className="h-5 w-5" />
               Create Unit
             </Button>
@@ -124,13 +134,12 @@ const Teacher = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {units.map((unit) => (
-                <Card 
-                  key={unit.id} 
-                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group"
-                  onClick={() => navigate(`/unit/${unit.id}`)}
-                >
-                  <CardHeader>
-                    <div className="flex justify-between items-start gap-4">
+                <div key={unit.id} className="flex flex-col">
+                  <Card 
+                    className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group flex-1"
+                    onClick={() => navigate(`/unit/${unit.id}`)}
+                  >
+                    <CardHeader>
                       <div className="space-y-1">
                         <CardTitle className="line-clamp-1 group-hover:text-primary transition-colors">
                           {unit.title}
@@ -141,19 +150,21 @@ const Teacher = () => {
                           </CardDescription>
                         )}
                       </div>
-                      <div className="bg-primary/10 px-3 py-1 rounded-full shrink-0">
-                        <span className="text-primary font-mono text-sm">
-                          {unit.code}
-                        </span>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      Created {new Date(unit.created_at).toLocaleDateString()}
-                    </p>
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Created {new Date(unit.created_at).toLocaleDateString()}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <div 
+                    className="mt-2 bg-primary/10 px-3 py-2 rounded-lg flex items-center justify-center cursor-pointer hover:bg-primary/20 transition-colors"
+                    onDoubleClick={() => handleCopyCode(unit.code)}
+                  >
+                    <span className="text-primary font-mono text-sm mr-2">{unit.code}</span>
+                    <Copy className="h-4 w-4 text-primary/70" />
+                  </div>
+                </div>
               ))}
             </div>
           )}
