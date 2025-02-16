@@ -1,4 +1,3 @@
-
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 
 const Index = () => {
@@ -24,8 +23,19 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [classCode, setClassCode] = useState("");
+  const [showMobileButtons, setShowMobileButtons] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
+      setShowMobileButtons(isAtBottom);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +87,6 @@ const Index = () => {
   return (
     <div className="min-h-screen font-roboto">
       <div className="grid md:grid-cols-2 h-screen">
-        {/* Left Section */}
         <div className="relative bg-gray-50 p-8 flex flex-col">
           <Logo size={40} />
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
@@ -133,7 +142,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Right Section */}
         <div className="relative bg-[#1a365d] p-8 flex flex-col">
           <Logo size={40} className="filter brightness-0 invert" />
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
@@ -160,7 +168,6 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Action Buttons - Ahora son responsivos */}
           <div className="hidden md:flex absolute bottom-8 right-8 flex-col gap-4">
             <Button 
               variant="outline" 
@@ -187,8 +194,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Botones para móvil al final de la página */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-center gap-4 shadow-lg">
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-center gap-4 shadow-lg transition-all duration-300 ${showMobileButtons ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'}`}>
         <Button 
           variant="outline" 
           onClick={() => setShowSupportDialog(true)}
@@ -212,7 +218,6 @@ const Index = () => {
         </Button>
       </div>
 
-      {/* Support Dialog */}
       <Dialog open={showSupportDialog} onOpenChange={setShowSupportDialog}>
         <DialogContent className="max-w-sm">
           <DialogHeader className="text-center">
@@ -238,7 +243,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Team Dialog */}
       <Dialog open={showTeamDialog} onOpenChange={setShowTeamDialog}>
         <DialogContent className="max-w-lg">
           <DialogHeader className="text-center">
@@ -268,7 +272,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Download Dialog */}
       <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader className="text-center">
