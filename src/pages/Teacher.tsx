@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Plus, Copy } from "lucide-react";
@@ -109,7 +108,7 @@ const Teacher = () => {
             <Button 
               onClick={() => setIsCreateOpen(true)} 
               size="lg" 
-              className="gap-2 self-end"
+              className="gap-2 self-center"
             >
               <Plus className="h-5 w-5" />
               Create Unit
