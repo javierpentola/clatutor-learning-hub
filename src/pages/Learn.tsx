@@ -14,12 +14,11 @@ const Draw = () => {
   const [canvas, setCanvas] = useState<Canvas | null>(null);
   const [selectedShape, setSelectedShape] = useState<Shape>("draw");
   const [text, setText] = useState("");
-  const lineStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const fabricCanvas = new Canvas(canvasRef.current, {
+    const fabricCanvas = new FabricCanvas(canvasRef.current, {
       width: 800,
       height: 600,
       backgroundColor: "#ffffff",
@@ -40,11 +39,18 @@ const Draw = () => {
 
   useEffect(() => {
     if (!canvas) return;
+
     canvas.isDrawingMode = selectedShape === "draw";
+    canvas.selection = !canvas.isDrawingMode;
+
+    if (canvas.isDrawingMode && canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.color = "#495057";
+      canvas.freeDrawingBrush.width = 2;
+    }
   }, [selectedShape, canvas]);
 
   const handleCanvasClick = (e: MouseEvent) => {
-    if (!canvas || !canvasRef.current) return;
+    if (!canvas || !canvasRef.current || selectedShape === "draw") return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
