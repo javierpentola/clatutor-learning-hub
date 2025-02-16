@@ -5,9 +5,16 @@ import { FaHeart, FaDownload, FaUsers } from "react-icons/fa";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
+
 const Index = () => {
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [showTeamDialog, setShowTeamDialog] = useState(false);
@@ -22,6 +29,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -33,6 +41,7 @@ const Index = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -69,6 +78,7 @@ const Index = () => {
       });
     }
   };
+
   const handleJoinClass = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!classCode.trim()) {
@@ -81,10 +91,13 @@ const Index = () => {
     }
     navigate(`/student/${classCode}`);
   };
+
   return <div className="min-h-screen font-roboto pb-24 md:pb-0">
       <div className="grid md:grid-cols-2 h-screen">
         <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg mx-0">
-          <Logo size={40} />
+          <div className="flex justify-center md:justify-start">
+            <Logo size={40} />
+          </div>
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
             <div className="text-center w-full">
               <h1 className="text-3xl font-bold text-[#1a365d] mb-2">
@@ -117,7 +130,9 @@ const Index = () => {
         </div>
 
         <div className="relative bg-[#1a365d] p-8 flex flex-col">
-          <Logo size={40} className="filter brightness-0 invert" />
+          <div className="flex justify-center md:justify-start">
+            <Logo size={40} className="filter brightness-0 invert" textClassName="text-white" />
+          </div>
           <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
             <div className="text-center w-full">
               <h2 className="text-3xl font-bold text-white mb-2">Join Your Class</h2>
@@ -247,4 +262,5 @@ const Index = () => {
       </Dialog>
     </div>;
 };
+
 export default Index;

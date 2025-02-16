@@ -1,7 +1,15 @@
 
 import React from 'react';
 
-export const Logo = ({ className = "", size = 40 }: { className?: string; size?: number }) => {
+export const Logo = ({ 
+  className = "", 
+  textClassName = "",
+  size = 40 
+}: { 
+  className?: string; 
+  textClassName?: string;
+  size?: number 
+}) => {
   return (
     <div className="flex items-center gap-2">
       <div className={`relative ${className}`} style={{ width: size, height: size }}>
@@ -11,7 +19,7 @@ export const Logo = ({ className = "", size = 40 }: { className?: string; size?:
           className="w-full h-full object-contain" 
         />
       </div>
-      <span className="text-[#1a365d] text-xl font-medium">CLA.app</span>
+      <span className={`text-[#1a365d] text-xl font-medium ${textClassName}`}>CLA.app</span>
     </div>
   );
 };
