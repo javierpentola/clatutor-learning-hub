@@ -38,7 +38,7 @@ const Student = () => {
 
           <button 
             className="bg-[#ea384c] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate("/combine")}
+            onClick={() => navigate(`/combine/${code}`)}
           >
             <Shuffle className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Combine</span>

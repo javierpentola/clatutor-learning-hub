@@ -7,6 +7,7 @@ import Teacher from "./pages/Teacher";
 import UnitDetail from "./pages/UnitDetail";
 import Student from "./pages/Student";
 import Flashcards from "./pages/Flashcards";
+import Combine from "./pages/Combine";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/unit/:id" element={<UnitDetail />} />
         <Route path="/student/:code" element={<Student />} />
         <Route path="/flashcards/:code" element={<Flashcards />} />
+        <Route path="/combine/:code" element={<Combine />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

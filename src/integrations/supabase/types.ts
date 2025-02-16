@@ -44,6 +44,47 @@ export type Database = {
           },
         ]
       }
+      combine_game_sessions: {
+        Row: {
+          completed: boolean | null
+          created_at: string | null
+          id: string
+          last_accessed: string | null
+          max_score: number | null
+          score: number | null
+          student_id: string
+          unit_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          max_score?: number | null
+          score?: number | null
+          student_id: string
+          unit_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          max_score?: number | null
+          score?: number | null
+          student_id?: string
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combine_game_sessions_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       decks: {
         Row: {
           created_at: string | null
