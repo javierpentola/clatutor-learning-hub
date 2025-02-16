@@ -22,7 +22,7 @@ const Student = () => {
 
           <button 
             className="bg-[#1a365d] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate("/learn")}
+            onClick={() => navigate(`/learn/${code}`)}
           >
             <Brain className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Learn</span>
