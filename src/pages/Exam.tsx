@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
@@ -16,6 +17,9 @@ interface ExamQuestion {
   question_type: string;
   options?: string[] | null;
   correct_answer: string;
+  question_data?: {
+    blanks_text?: string;
+  } | null;
 }
 
 const Exam = () => {
@@ -48,7 +52,8 @@ const Exam = () => {
         question: q.question,
         question_type: q.question_type,
         options: q.options as string[] | null,
-        correct_answer: q.correct_answer
+        correct_answer: q.correct_answer,
+        question_data: q.question_data
       }));
 
       setQuestions(transformedQuestions);
@@ -114,7 +119,6 @@ const Exam = () => {
     try {
       const finalScore = calculateScore();
       
-      // Update exam session
       const { error: updateError } = await supabase
         .from('exam_sessions')
         .update({
@@ -208,6 +212,19 @@ const Exam = () => {
                       />
                     </div>
                   )}
+
+                  {question.question_type === 'fill_blanks' && question.question_data?.blanks_text && (
+                    <div className="space-y-4">
+                      <p className="text-gray-600 mb-4">Fill in the blanks:</p>
+                      <p className="text-lg mb-4">{question.question_data.blanks_text}</p>
+                      <Input
+                        value={answers[question.id] || ""}
+                        onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                        placeholder="Type your answer here..."
+                        className="w-full"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -226,7 +243,7 @@ const Exam = () => {
             <p className="text-2xl mb-8">
               Final Score: {score?.toFixed(1)}%
               <span className="text-sm text-gray-500 block mt-2">
-                (Score calculated from multiple choice and true/false questions only)
+                (Score calculated from multiple choice, true/false, and fill in the blanks questions only)
               </span>
             </p>
 
@@ -239,6 +256,9 @@ const Exam = () => {
                   <p className="text-gray-600 mt-2">Your answer: {answers[question.id]}</p>
                   {question.question_type !== 'written' && (
                     <p className="text-gray-600">Correct answer: {question.correct_answer}</p>
+                  )}
+                  {question.question_type === 'fill_blanks' && question.question_data?.blanks_text && (
+                    <p className="text-gray-500 mt-2">Template: {question.question_data.blanks_text}</p>
                   )}
                 </div>
               ))}
@@ -255,4 +275,3 @@ const Exam = () => {
 };
 
 export default Exam;
-
