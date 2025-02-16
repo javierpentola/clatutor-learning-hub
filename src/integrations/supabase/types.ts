@@ -65,6 +65,44 @@ export type Database = {
         }
         Relationships: []
       }
+      flashcard_sessions: {
+        Row: {
+          completed_cards: number | null
+          created_at: string | null
+          id: string
+          last_accessed: string | null
+          student_id: string
+          total_cards: number | null
+          unit_id: string
+        }
+        Insert: {
+          completed_cards?: number | null
+          created_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          student_id: string
+          total_cards?: number | null
+          unit_id: string
+        }
+        Update: {
+          completed_cards?: number | null
+          created_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          student_id?: string
+          total_cards?: number | null
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcard_sessions_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flashcards: {
         Row: {
           answer: string

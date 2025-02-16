@@ -1,9 +1,10 @@
 
 import { BookOpen, Brain, HelpCircle, Shuffle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Student = () => {
   const navigate = useNavigate();
+  const { code } = useParams();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 p-8">
@@ -13,7 +14,7 @@ const Student = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <button 
             className="bg-[#ea384c] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate("/flashcards")}
+            onClick={() => navigate(`/flashcards/${code}`)}
           >
             <BookOpen className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Flashcards</span>
