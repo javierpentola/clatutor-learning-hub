@@ -1,17 +1,15 @@
 
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { FaHeart, FaDownload, FaUsers } from "react-icons/fa";
+import { FaHeart, FaDownload } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { JoinClassForm } from "@/components/auth/JoinClassForm";
 import { SupportDialog } from "@/components/dialogs/SupportDialog";
-import { TeamDialog } from "@/components/dialogs/TeamDialog";
 import { DownloadDialog } from "@/components/dialogs/DownloadDialog";
 
 const Index = () => {
   const [showSupportDialog, setShowSupportDialog] = useState(false);
-  const [showTeamDialog, setShowTeamDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [showMobileButtons, setShowMobileButtons] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -52,9 +50,6 @@ const Index = () => {
             <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
               <FaHeart className="h-5 w-5" />
             </Button>
-            <Button variant="outline" onClick={() => setShowTeamDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
-              <FaUsers className="h-5 w-5" />
-            </Button>
             <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
               <FaDownload className="h-5 w-5" />
             </Button>
@@ -66,16 +61,12 @@ const Index = () => {
         <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]">
           <FaHeart className="h-5 w-5" />
         </Button>
-        <Button variant="outline" onClick={() => setShowTeamDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]">
-          <FaUsers className="h-5 w-5" />
-        </Button>
         <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-[#1a365d]">
           <FaDownload className="h-5 w-5" />
         </Button>
       </div>
 
       <SupportDialog open={showSupportDialog} onOpenChange={setShowSupportDialog} />
-      <TeamDialog open={showTeamDialog} onOpenChange={setShowTeamDialog} />
       <DownloadDialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog} />
     </div>
   );
