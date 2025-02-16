@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, Text, IEvent } from "fabric";
+import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, Text, TEvent } from "fabric";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -35,7 +35,7 @@ const Learn = () => {
     };
   }, []);
 
-  const handleMouseDown = (event: IEvent) => {
+  const handleMouseDown = (event: TEvent) => {
     if (!canvas || !event.pointer) return;
 
     const pointer = event.pointer;
@@ -81,11 +81,11 @@ const Learn = () => {
     canvas.renderAll();
   };
 
-  const handleMouseMove = (event: IEvent) => {
+  const handleMouseMove = (event: TEvent) => {
     if (!canvas || !event.pointer || !lineStartRef.current || selectedShape !== "line") return;
   };
 
-  const handleMouseUp = (event: IEvent) => {
+  const handleMouseUp = (event: TEvent) => {
     if (!canvas || !event.pointer || !lineStartRef.current || selectedShape !== "line") return;
 
     const line = new Line([
@@ -115,7 +115,8 @@ const Learn = () => {
     if (!canvas) return;
     const dataUrl = canvas.toDataURL({
       format: "png",
-      quality: 1
+      quality: 1,
+      multiplier: 1 // Added the required multiplier property
     });
     
     const link = document.createElement("a");
