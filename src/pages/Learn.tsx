@@ -36,9 +36,9 @@ const Learn = () => {
   }, []);
 
   const handleMouseDown = (event: TEvent<TPointerEvent>) => {
-    if (!canvas || !event.absolutePointer) return;
+    if (!canvas || !event.pointer) return;
 
-    const pointer = event.absolutePointer;
+    const pointer = event.pointer;
 
     if (selectedShape === "line") {
       lineStartRef.current = { x: pointer.x, y: pointer.y };
@@ -82,17 +82,17 @@ const Learn = () => {
   };
 
   const handleMouseMove = (event: TEvent<TPointerEvent>) => {
-    if (!canvas || !event.absolutePointer || !lineStartRef.current || selectedShape !== "line") return;
+    if (!canvas || !event.pointer || !lineStartRef.current || selectedShape !== "line") return;
   };
 
   const handleMouseUp = (event: TEvent<TPointerEvent>) => {
-    if (!canvas || !event.absolutePointer || !lineStartRef.current || selectedShape !== "line") return;
+    if (!canvas || !event.pointer || !lineStartRef.current || selectedShape !== "line") return;
 
     const line = new Line([
       lineStartRef.current.x,
       lineStartRef.current.y,
-      event.absolutePointer.x,
-      event.absolutePointer.y
+      event.pointer.x,
+      event.pointer.y
     ], {
       stroke: "#495057",
       strokeWidth: 2,
