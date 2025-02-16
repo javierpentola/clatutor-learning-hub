@@ -110,7 +110,6 @@ const MemoryGame = () => {
   };
 
   const checkMatch = () => {
-    // Verificar que tengamos exactamente 2 cartas volteadas
     if (flippedCards.length !== 2) {
       setIsChecking(false);
       setFlippedCards([]);
@@ -119,34 +118,38 @@ const MemoryGame = () => {
 
     const [first, second] = flippedCards;
 
-    // Verificar que ambas cartas existan y tengan pairId
     if (!first || !second || !first.pairId || !second.pairId) {
       setIsChecking(false);
       setFlippedCards([]);
       return;
     }
 
-    if (first.pairId === second.pairId && first.type !== second.type) {
-      const newCards = cards.map((card) =>
-        card.id === first.id || card.id === second.id
-          ? { ...card, isMatched: true }
-          : card
-      );
-      setCards(newCards);
+    const isMatch = first.pairId === second.pairId && first.type !== second.type;
+
+    const newCards = cards.map((card) => {
+      if (card.id === first.id || card.id === second.id) {
+        if (isMatch) {
+          // Si hay coincidencia, marcamos las cartas como emparejadas y volteadas
+          return { ...card, isMatched: true, isFlipped: true };
+        } else {
+          // Si no hay coincidencia, las volvemos a ocultar
+          return { ...card, isFlipped: false };
+        }
+      }
+      return card;
+    });
+
+    setCards(newCards);
+
+    if (isMatch) {
       setMatches(matches + 1);
       if (matches + 1 === qaPairs?.length) {
         toast("¡Felicidades! ¡Has completado el juego! 🎉");
       } else {
         toast("¡Encontraste una pareja! 🎯");
       }
-    } else {
-      const newCards = cards.map((card) =>
-        card.id === first.id || card.id === second.id
-          ? { ...card, isFlipped: false }
-          : card
-      );
-      setCards(newCards);
     }
+
     setFlippedCards([]);
     setIsChecking(false);
   };
