@@ -199,7 +199,7 @@ const Index = () => {
         </div>
       </div>
 
-      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-center gap-4 shadow-lg transition-all duration-300 ${showMobileButtons ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'}`}>
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-center gap-4 shadow-lg transition-all duration-500 ease-in-out ${showMobileButtons ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'}`}>
         <Button 
           variant="outline" 
           onClick={() => setShowSupportDialog(true)}
