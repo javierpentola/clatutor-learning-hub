@@ -129,10 +129,10 @@ const MemoryGame = () => {
       if (card.id === first.id || card.id === second.id) {
         if (isMatch) {
           // Si es una pareja correcta, las marcamos como matched y no se mostrarán
-          return { ...card, isMatched: true, isFlipped: false };
+          return { ...card, isMatched: true };
         } else {
-          // Si no son pareja, vuelven a ser azules
-          return { ...card, isMatched: false, isFlipped: false };
+          // Si no son pareja, vuelven a su estado original (azules)
+          return { ...card, isFlipped: false };
         }
       }
       return card;
