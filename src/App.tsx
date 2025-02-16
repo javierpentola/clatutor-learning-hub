@@ -10,6 +10,7 @@ import Flashcards from "./pages/Flashcards";
 import Combine from "./pages/Combine";
 import ExamSetup from "./pages/ExamSetup";
 import Exam from "./pages/Exam";
+import Draw from "./pages/Learn"; // Importamos el componente Draw desde Learn.tsx
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/combine/:code" element={<Combine />} />
         <Route path="/exam-setup/:code" element={<ExamSetup />} />
         <Route path="/exam/:sessionId" element={<Exam />} />
+        <Route path="/learn" element={<Draw />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
