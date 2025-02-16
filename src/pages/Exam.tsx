@@ -14,7 +14,7 @@ interface ExamQuestion {
   id: string;
   question: string;
   question_type: string;
-  options?: string[];
+  options?: string[] | null;
   correct_answer: string;
 }
 
@@ -34,7 +34,7 @@ const Exam = () => {
 
   const loadExam = async () => {
     try {
-      const { data: questions, error: questionsError } = await supabase
+      const { data: questionsData, error: questionsError } = await supabase
         .from('exam_questions')
         .select('*')
         .eq('exam_session_id', sessionId)
@@ -42,7 +42,16 @@ const Exam = () => {
 
       if (questionsError) throw questionsError;
 
-      setQuestions(questions);
+      // Transform the data to match our ExamQuestion interface
+      const transformedQuestions: ExamQuestion[] = questionsData.map(q => ({
+        id: q.id,
+        question: q.question,
+        question_type: q.question_type,
+        options: q.options as string[] | null,
+        correct_answer: q.correct_answer
+      }));
+
+      setQuestions(transformedQuestions);
       setLoading(false);
     } catch (error: any) {
       toast({
