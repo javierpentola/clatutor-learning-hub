@@ -29,12 +29,12 @@ const Flashcards = () => {
 
   const loadFlashcards = async () => {
     try {
-      // First get the unit by code
+      // First get the unit by code, using maybeSingle() instead of single()
       const { data: unitData, error: unitError } = await supabase
         .from('units')
         .select('id, title')
         .eq('code', code)
-        .single();
+        .maybeSingle();
 
       if (unitError) throw unitError;
       if (!unitData) {
@@ -63,12 +63,13 @@ const Flashcards = () => {
         return;
       }
 
-      // Create or update the session
+      // Create or update the session - using a generated UUID for student_id temporarily
+      const tempStudentId = crypto.randomUUID();
       const { data: sessionData, error: sessionError } = await supabase
         .from('flashcard_sessions')
         .upsert({
           unit_id: unitData.id,
-          student_id: 'temporary-id', // This should be replaced with actual student ID when auth is implemented
+          student_id: tempStudentId,
           total_cards: qaData.length,
           completed_cards: 0,
           last_accessed: new Date().toISOString(),
