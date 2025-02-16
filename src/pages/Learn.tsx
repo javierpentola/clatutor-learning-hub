@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, Text, TEvent } from "fabric";
+import { Canvas as FabricCanvas, Canvas, Circle, Line, Rect, Text, TEvent, TPointerEvent } from "fabric";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -35,10 +35,10 @@ const Learn = () => {
     };
   }, []);
 
-  const handleMouseDown = (event: TEvent) => {
-    if (!canvas || !event.pointer) return;
+  const handleMouseDown = (event: TEvent<TPointerEvent>) => {
+    if (!canvas || !event.absolutePointer) return;
 
-    const pointer = event.pointer;
+    const pointer = event.absolutePointer;
 
     if (selectedShape === "line") {
       lineStartRef.current = { x: pointer.x, y: pointer.y };
@@ -81,18 +81,18 @@ const Learn = () => {
     canvas.renderAll();
   };
 
-  const handleMouseMove = (event: TEvent) => {
-    if (!canvas || !event.pointer || !lineStartRef.current || selectedShape !== "line") return;
+  const handleMouseMove = (event: TEvent<TPointerEvent>) => {
+    if (!canvas || !event.absolutePointer || !lineStartRef.current || selectedShape !== "line") return;
   };
 
-  const handleMouseUp = (event: TEvent) => {
-    if (!canvas || !event.pointer || !lineStartRef.current || selectedShape !== "line") return;
+  const handleMouseUp = (event: TEvent<TPointerEvent>) => {
+    if (!canvas || !event.absolutePointer || !lineStartRef.current || selectedShape !== "line") return;
 
     const line = new Line([
       lineStartRef.current.x,
       lineStartRef.current.y,
-      event.pointer.x,
-      event.pointer.y
+      event.absolutePointer.x,
+      event.absolutePointer.y
     ], {
       stroke: "#495057",
       strokeWidth: 2,
@@ -116,7 +116,7 @@ const Learn = () => {
     const dataUrl = canvas.toDataURL({
       format: "png",
       quality: 1,
-      multiplier: 1 // Added the required multiplier property
+      multiplier: 1
     });
     
     const link = document.createElement("a");
