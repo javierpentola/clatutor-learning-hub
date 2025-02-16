@@ -147,14 +147,22 @@ const Flashcards = () => {
         </div>
 
         {/* Flashcard */}
-        <div 
-          className="bg-white rounded-xl shadow-lg p-8 min-h-[300px] mb-8 cursor-pointer transition-all duration-300 transform hover:shadow-xl"
-          onClick={handleFlip}
-        >
-          <div className="flex items-center justify-center h-full">
-            <p className="text-2xl text-center">
-              {isFlipped ? cards[currentCardIndex].answer : cards[currentCardIndex].question}
-            </p>
+        <div className="perspective-1000 relative h-[300px] mb-8 cursor-pointer select-none">
+          <div
+            className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${
+              isFlipped ? "[transform:rotateY(180deg)]" : ""
+            }`}
+            onClick={handleFlip}
+          >
+            {/* Front of card */}
+            <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg p-8 flex items-center justify-center">
+              <p className="text-2xl text-center">{cards[currentCardIndex].question}</p>
+            </div>
+
+            {/* Back of card */}
+            <div className="absolute w-full h-full backface-hidden [transform:rotateY(180deg)] bg-white rounded-xl shadow-lg p-8 flex items-center justify-center">
+              <p className="text-2xl text-center">{cards[currentCardIndex].answer}</p>
+            </div>
           </div>
         </div>
 
