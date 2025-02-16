@@ -160,33 +160,42 @@ export type Database = {
           created_at: string | null
           id: string
           max_score: number | null
+          num_questions: number | null
           question_types: string[]
           responses: Json | null
           score: number | null
           student_id: string
+          unit_code: string | null
           unit_id: string
+          unit_title: string | null
         }
         Insert: {
           completed_at?: string | null
           created_at?: string | null
           id?: string
           max_score?: number | null
+          num_questions?: number | null
           question_types: string[]
           responses?: Json | null
           score?: number | null
           student_id: string
+          unit_code?: string | null
           unit_id: string
+          unit_title?: string | null
         }
         Update: {
           completed_at?: string | null
           created_at?: string | null
           id?: string
           max_score?: number | null
+          num_questions?: number | null
           question_types?: string[]
           responses?: Json | null
           score?: number | null
           student_id?: string
+          unit_code?: string | null
           unit_id?: string
+          unit_title?: string | null
         }
         Relationships: [
           {
