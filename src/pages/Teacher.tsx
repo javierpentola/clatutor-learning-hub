@@ -105,21 +105,21 @@ const Teacher = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto py-12 px-4">
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="order-2 sm:order-1">
+          <div className="flex flex-col gap-4">
+            <Button 
+              onClick={() => setIsCreateOpen(true)} 
+              size="lg" 
+              className="gap-2 self-end"
+            >
+              <Plus className="h-5 w-5" />
+              Create Unit
+            </Button>
+            <div>
               <h1 className="text-4xl font-bold tracking-tight">Your Units</h1>
               <p className="text-muted-foreground mt-2">
                 Create and manage your teaching units
               </p>
             </div>
-            <Button 
-              onClick={() => setIsCreateOpen(true)} 
-              size="lg" 
-              className="gap-2 order-1 sm:order-2"
-            >
-              <Plus className="h-5 w-5" />
-              Create Unit
-            </Button>
           </div>
 
           {!units?.length ? (
