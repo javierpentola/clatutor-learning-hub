@@ -2,6 +2,9 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaGoogle, FaHeart, FaDownload, FaUsers } from "react-icons/fa";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +18,27 @@ const Index = () => {
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [showTeamDialog, setShowTeamDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/teacher`
+        }
+      });
+      
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen font-roboto">
@@ -28,7 +52,7 @@ const Index = () => {
               <p className="text-gray-600 mb-8">Sign in to access your account</p>
               <Button 
                 className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-normal h-12"
-                onClick={() => console.log("Google login clicked")}
+                onClick={handleGoogleLogin}
               >
                 <FaGoogle className="mr-2" />
                 Sign in with Google
@@ -128,9 +152,9 @@ const Index = () => {
           </DialogHeader>
           <div className="grid grid-cols-3 gap-6 pt-8">
             {[
-              { name: "Otto", role: "Chief Happiness Officer", image: "public/lovable-uploads/80e0e136-9e70-4f6e-b9e4-2b5e301a6575.png" },
-              { name: "Kenji", role: "Security Manager", image: "public/lovable-uploads/7061d77c-b6af-4761-9ea6-20a50ebd19d4.png" },
-              { name: "Fisher", role: "Snack Coordinator", image: "public/lovable-uploads/b36dc453-e67e-41ee-8c63-a64ac6a3c524.png" }
+              { name: "Otto", role: "Chief Happiness Officer", image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" },
+              { name: "Kenji", role: "Security Manager", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" },
+              { name: "Fisher", role: "Snack Coordinator", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e" }
             ].map((member) => (
               <div key={member.name} className="text-center">
                 <div className="w-24 h-24 mx-auto mb-4">
