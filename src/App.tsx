@@ -8,6 +8,8 @@ import UnitDetail from "./pages/UnitDetail";
 import Student from "./pages/Student";
 import Flashcards from "./pages/Flashcards";
 import Combine from "./pages/Combine";
+import ExamSetup from "./pages/ExamSetup";
+import Exam from "./pages/Exam";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/student/:code" element={<Student />} />
         <Route path="/flashcards/:code" element={<Flashcards />} />
         <Route path="/combine/:code" element={<Combine />} />
+        <Route path="/exam-setup/:code" element={<ExamSetup />} />
+        <Route path="/exam/:sessionId" element={<Exam />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

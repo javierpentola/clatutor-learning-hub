@@ -106,6 +106,98 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string | null
+          exam_session_id: string
+          id: string
+          options: Json | null
+          original_qa_id: string | null
+          question: string
+          question_type: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string | null
+          exam_session_id: string
+          id?: string
+          options?: Json | null
+          original_qa_id?: string | null
+          question: string
+          question_type: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string | null
+          exam_session_id?: string
+          id?: string
+          options?: Json | null
+          original_qa_id?: string | null
+          question?: string
+          question_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_exam_session_id_fkey"
+            columns: ["exam_session_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_questions_original_qa_id_fkey"
+            columns: ["original_qa_id"]
+            isOneToOne: false
+            referencedRelation: "questions_answers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          max_score: number | null
+          question_types: string[]
+          responses: Json | null
+          score: number | null
+          student_id: string
+          unit_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          max_score?: number | null
+          question_types: string[]
+          responses?: Json | null
+          score?: number | null
+          student_id: string
+          unit_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          max_score?: number | null
+          question_types?: string[]
+          responses?: Json | null
+          score?: number | null
+          student_id?: string
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_sessions_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flashcard_sessions: {
         Row: {
           completed_cards: number | null
