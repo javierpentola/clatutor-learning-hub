@@ -8,7 +8,14 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-type QuestionType = "multiple_choice" | "true_false" | "open_ended";
+type QuestionType = 
+  | "multiple_choice" 
+  | "true_false" 
+  | "written" 
+  | "matching" 
+  | "fill_blanks" 
+  | "sequence" 
+  | "categorization";
 
 const ExamSetup = () => {
   const { code } = useParams();
@@ -18,9 +25,13 @@ const ExamSetup = () => {
   const [loading, setLoading] = useState(false);
 
   const questionTypes = [
-    { id: "multiple_choice", label: "Multiple Choice" },
-    { id: "true_false", label: "True/False" },
-    { id: "open_ended", label: "Open Ended" },
+    { id: "multiple_choice", label: "Multiple Choice Questions" },
+    { id: "true_false", label: "True/False Questions" },
+    { id: "written", label: "Written Questions" },
+    { id: "matching", label: "Matching Questions" },
+    { id: "fill_blanks", label: "Fill in the Blanks" },
+    { id: "sequence", label: "Order in Sequence" },
+    { id: "categorization", label: "Categorization by Groups" },
   ] as const;
 
   const handleTypeToggle = (type: QuestionType) => {
@@ -44,10 +55,10 @@ const ExamSetup = () => {
     try {
       setLoading(true);
 
-      // Get the unit ID first
+      // Get the unit ID and title first
       const { data: unitData, error: unitError } = await supabase
         .from('units')
-        .select('id')
+        .select('id, title, code')
         .eq('code', code)
         .single();
 
@@ -61,6 +72,8 @@ const ExamSetup = () => {
           unit_id: unitData.id,
           student_id: tempStudentId,
           question_types: selectedTypes,
+          unit_title: unitData.title,
+          unit_code: unitData.code
         })
         .select()
         .single();
@@ -92,7 +105,7 @@ const ExamSetup = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Select Question Types</h2>
           <p className="text-gray-600 mb-6">
-            Choose the types of questions you want in your exam.
+            Choose the types of questions you want in your exam. Each type offers different ways to test knowledge and understanding.
           </p>
 
           <div className="space-y-4">
@@ -103,7 +116,7 @@ const ExamSetup = () => {
                   checked={selectedTypes.includes(id as QuestionType)}
                   onCheckedChange={() => handleTypeToggle(id as QuestionType)}
                 />
-                <Label htmlFor={id}>{label}</Label>
+                <Label htmlFor={id} className="text-base">{label}</Label>
               </div>
             ))}
           </div>
