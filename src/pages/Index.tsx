@@ -24,18 +24,23 @@ const Index = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [classCode, setClassCode] = useState("");
   const [showMobileButtons, setShowMobileButtons] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
-      setShowMobileButtons(isAtBottom);
+      const currentScrollY = window.scrollY;
+      const isAtBottom = window.innerHeight + currentScrollY >= document.documentElement.scrollHeight - 100;
+      const isScrollingUp = currentScrollY < lastScrollY;
+
+      setShowMobileButtons(isAtBottom && !isScrollingUp);
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
