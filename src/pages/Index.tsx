@@ -1,3 +1,4 @@
+
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -201,13 +202,13 @@ const Index = () => {
       </Dialog>
 
       <Dialog open={showTeamDialog} onOpenChange={setShowTeamDialog}>
-        <DialogContent className="max-w-lg duration-300 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out">
+        <DialogContent className="max-w-lg duration-500 ease-in-out transform transition-all data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-left-1/2">
           <DialogHeader className="text-center">
-            <div className="mx-auto text-[#1a365d] mb-4 animate-scale-in">
+            <div className="mx-auto text-[#1a365d] mb-4">
               <FaUsers className="h-8 w-8" />
             </div>
-            <DialogTitle className="text-xl font-bold mb-2 animate-fade-in">Our Team</DialogTitle>
-            <DialogDescription className="text-gray-600 animate-fade-in">
+            <DialogTitle className="text-xl font-bold mb-2">Our Team</DialogTitle>
+            <DialogDescription className="text-gray-600">
               Meet the people behind CLA.app
             </DialogDescription>
           </DialogHeader>
@@ -225,8 +226,8 @@ const Index = () => {
             role: "Snack Coordinator",
             image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e"
           }].map(member => (
-              <div key={member.name} className="text-center animate-fade-in">
-                <div className="w-24 h-24 mx-auto mb-4 animate-scale-in">
+              <div key={member.name} className="text-center">
+                <div className="w-24 h-24 mx-auto mb-4 transform transition-all duration-500">
                   <img src={member.image} alt={member.name} className="w-full h-full object-cover rounded-full" />
                 </div>
                 <h3 className="font-bold text-[#1a365d]">{member.name}</h3>
