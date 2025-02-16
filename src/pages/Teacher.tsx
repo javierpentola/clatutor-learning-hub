@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { BookOpen, Plus } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,7 +71,7 @@ const Teacher = () => {
           title,
           description,
           code: codeData,
-          teacher_id: user.id // Add the teacher_id field
+          teacher_id: user.id
         },
       ]);
 
@@ -96,77 +96,109 @@ const Teacher = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Your Units</h1>
-        <Button onClick={() => setIsCreateOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Unit
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {units?.map((unit) => (
-          <Card key={unit.id} className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => navigate(`/unit/${unit.id}`)}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle>{unit.title}</CardTitle>
-                  <CardDescription>{unit.description}</CardDescription>
-                </div>
-                <div className="bg-primary/10 px-3 py-1 rounded-full">
-                  <span className="text-primary font-mono">{unit.code}</span>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Created {new Date(unit.created_at).toLocaleDateString()}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto py-12 px-4">
+        <div className="flex flex-col gap-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight">Your Units</h1>
+              <p className="text-muted-foreground mt-2">
+                Create and manage your teaching units
               </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Unit</DialogTitle>
-            <DialogDescription>
-              Create a new unit for your students. Each unit must have at least one question and answer.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter unit title"
-              />
             </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter unit description"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleCreateUnit} disabled={!title}>
+            <Button onClick={() => setIsCreateOpen(true)} size="lg" className="gap-2">
+              <Plus className="h-5 w-5" />
               Create Unit
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+
+          {!units?.length ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <BookOpen className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No units created yet</h3>
+              <p className="text-muted-foreground mb-4 max-w-sm">
+                Get started by creating your first teaching unit. You can add questions and answers later.
+              </p>
+              <Button onClick={() => setIsCreateOpen(true)}>Create Your First Unit</Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {units.map((unit) => (
+                <Card 
+                  key={unit.id} 
+                  className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group"
+                  onClick={() => navigate(`/unit/${unit.id}`)}
+                >
+                  <CardHeader>
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="space-y-1">
+                        <CardTitle className="line-clamp-1 group-hover:text-primary transition-colors">
+                          {unit.title}
+                        </CardTitle>
+                        {unit.description && (
+                          <CardDescription className="line-clamp-2">
+                            {unit.description}
+                          </CardDescription>
+                        )}
+                      </div>
+                      <div className="bg-primary/10 px-3 py-1 rounded-full shrink-0">
+                        <span className="text-primary font-mono text-sm">
+                          {unit.code}
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Created {new Date(unit.created_at).toLocaleDateString()}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <DialogContent className="sm:max-w-[525px]">
+            <DialogHeader>
+              <DialogTitle>Create New Unit</DialogTitle>
+              <DialogDescription>
+                Create a new unit for your students. You can add questions and answers after creating the unit.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter unit title"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter unit description"
+                  rows={4}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleCreateUnit} disabled={!title}>
+                Create Unit
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
