@@ -110,7 +110,22 @@ const MemoryGame = () => {
   };
 
   const checkMatch = () => {
+    // Verificar que tengamos exactamente 2 cartas volteadas
+    if (flippedCards.length !== 2) {
+      setIsChecking(false);
+      setFlippedCards([]);
+      return;
+    }
+
     const [first, second] = flippedCards;
+
+    // Verificar que ambas cartas existan y tengan pairId
+    if (!first || !second || !first.pairId || !second.pairId) {
+      setIsChecking(false);
+      setFlippedCards([]);
+      return;
+    }
+
     if (first.pairId === second.pairId && first.type !== second.type) {
       const newCards = cards.map((card) =>
         card.id === first.id || card.id === second.id
