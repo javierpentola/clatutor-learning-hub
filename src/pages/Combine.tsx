@@ -247,9 +247,9 @@ const Combine = () => {
             {questions.map((question, index) => (
               <div
                 key={`q-${index}`}
-                className={`p-4 rounded-lg cursor-pointer transition-all ${
+                className={`p-4 rounded-lg cursor-pointer transition-all duration-500 ${
                   matchState.matched.has(question)
-                    ? "bg-green-100 border-green-500"
+                    ? "opacity-0 pointer-events-none transform translate-y-2"
                     : matchState.selected === question
                     ? "bg-blue-100 border-blue-500"
                     : "bg-white hover:bg-gray-50"
@@ -267,9 +267,9 @@ const Combine = () => {
             {answers.map((answer, index) => (
               <div
                 key={`a-${index}`}
-                className={`p-4 rounded-lg cursor-pointer transition-all ${
+                className={`p-4 rounded-lg cursor-pointer transition-all duration-500 ${
                   matchState.matched.has(answer)
-                    ? "bg-green-100 border-green-500"
+                    ? "opacity-0 pointer-events-none transform translate-y-2"
                     : matchState.selected === answer
                     ? "bg-blue-100 border-blue-500"
                     : "bg-white hover:bg-gray-50"
