@@ -97,12 +97,14 @@ const Combine = () => {
 
       console.log('Found QA pairs:', qaData.length);
 
-      // Crear o actualizar la sesión - usaremos un ID anónimo para estudiantes no registrados
+      // Generate a valid UUID for anonymous users
+      const anonymousUuid = crypto.randomUUID();
+      
       const { data: sessionData, error: sessionError } = await supabase
         .from('combine_game_sessions')
         .insert({
           unit_id: unitData.id,
-          student_id: 'anonymous', // Usamos 'anonymous' en lugar de un UUID temporal
+          student_id: anonymousUuid,
           max_score: qaData.length,
           score: 0,
           completed: false,
