@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -96,13 +97,12 @@ const Combine = () => {
 
       console.log('Found QA pairs:', qaData.length);
 
-      // Create session
-      const tempStudentId = crypto.randomUUID();
+      // Crear o actualizar la sesión - usaremos un ID anónimo para estudiantes no registrados
       const { data: sessionData, error: sessionError } = await supabase
         .from('combine_game_sessions')
-        .upsert({
+        .insert({
           unit_id: unitData.id,
-          student_id: tempStudentId,
+          student_id: 'anonymous', // Usamos 'anonymous' en lugar de un UUID temporal
           max_score: qaData.length,
           score: 0,
           completed: false,
