@@ -283,24 +283,6 @@ export type Database = {
           },
         ]
       }
-      newsletter_subscribers: {
-        Row: {
-          created_at: string
-          email: string | null
-          id: number
-        }
-        Insert: {
-          created_at?: string
-          email?: string | null
-          id?: number
-        }
-        Update: {
-          created_at?: string
-          email?: string | null
-          id?: number
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null

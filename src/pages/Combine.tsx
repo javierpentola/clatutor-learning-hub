@@ -5,18 +5,9 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-
-interface QAPair {
-  id: string;
-  question: string;
-  answer: string;
-}
-
-interface MatchState {
-  selected: string | null;
-  matched: Set<string>;
-  score: number;
-}
+import { GameColumn } from "@/components/game/GameColumn";
+import { useGameLogic } from "@/hooks/useGameLogic";
+import { QAPair } from "@/types/game";
 
 const Combine = () => {
   const { code } = useParams();
@@ -26,12 +17,8 @@ const Combine = () => {
   const [questions, setQuestions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<string[]>([]);
   const [pairs, setPairs] = useState<QAPair[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [matchState, setMatchState] = useState<MatchState>({
-    selected: null,
-    matched: new Set(),
-    score: 0,
-  });
+
+  const { matchState, setSessionId, handleItemClick } = useGameLogic(pairs);
 
   useEffect(() => {
     if (!code) {
@@ -97,7 +84,6 @@ const Combine = () => {
 
       console.log('Found QA pairs:', qaData.length);
 
-      // Generate a valid UUID for anonymous users
       const anonymousUuid = crypto.randomUUID();
       
       const { data: sessionData, error: sessionError } = await supabase
@@ -121,7 +107,6 @@ const Combine = () => {
       setSessionId(sessionData.id);
       setPairs(qaData);
       
-      // Shuffle questions and answers separately
       const shuffledQuestions = [...qaData].sort(() => Math.random() - 0.5).map(qa => qa.question);
       const shuffledAnswers = [...qaData].sort(() => Math.random() - 0.5).map(qa => qa.answer);
       
@@ -136,68 +121,6 @@ const Combine = () => {
         variant: "destructive",
       });
       setLoading(false);
-    }
-  };
-
-  const handleItemClick = (item: string, isQuestion: boolean) => {
-    if (matchState.matched.has(item)) return;
-
-    if (!matchState.selected) {
-      setMatchState({ ...matchState, selected: item });
-      return;
-    }
-
-    // If clicking the same type (question-question or answer-answer), just update selection
-    if ((isQuestion && questions.includes(matchState.selected)) ||
-        (!isQuestion && answers.includes(matchState.selected))) {
-      setMatchState({ ...matchState, selected: item });
-      return;
-    }
-
-    // Check if it's a match
-    const selectedPair = pairs.find(pair => 
-      (pair.question === item && pair.answer === matchState.selected) ||
-      (pair.answer === item && pair.question === matchState.selected)
-    );
-
-    if (selectedPair) {
-      // It's a match!
-      const newMatched = new Set(matchState.matched);
-      newMatched.add(item);
-      newMatched.add(matchState.selected);
-      const newScore = matchState.score + 1;
-      
-      setMatchState({
-        selected: null,
-        matched: newMatched,
-        score: newScore,
-      });
-
-      // Update session score
-      if (sessionId) {
-        supabase
-          .from('combine_game_sessions')
-          .update({ 
-            score: newScore,
-            completed: newScore === pairs.length,
-            last_accessed: new Date().toISOString()
-          })
-          .eq('id', sessionId)
-          .then(({ error }) => {
-            if (error) console.error('Error updating score:', error);
-          });
-      }
-
-      // Check if game is complete
-      if (newScore === pairs.length) {
-        toast({
-          title: "Congratulations!",
-          description: "You've matched all the pairs correctly!",
-        });
-      }
-    } else {
-      // Not a match
-      setMatchState({ ...matchState, selected: null });
     }
   };
 
@@ -241,45 +164,18 @@ const Combine = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Questions column */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Questions</h2>
-            {questions.map((question, index) => (
-              <div
-                key={`q-${index}`}
-                className={`p-4 rounded-lg cursor-pointer transition-all duration-500 ${
-                  matchState.matched.has(question)
-                    ? "opacity-0 pointer-events-none transform translate-y-2"
-                    : matchState.selected === question
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-white hover:bg-gray-50"
-                } border shadow-sm`}
-                onClick={() => handleItemClick(question, true)}
-              >
-                {question}
-              </div>
-            ))}
-          </div>
-
-          {/* Answers column */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Answers</h2>
-            {answers.map((answer, index) => (
-              <div
-                key={`a-${index}`}
-                className={`p-4 rounded-lg cursor-pointer transition-all duration-500 ${
-                  matchState.matched.has(answer)
-                    ? "opacity-0 pointer-events-none transform translate-y-2"
-                    : matchState.selected === answer
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-white hover:bg-gray-50"
-                } border shadow-sm`}
-                onClick={() => handleItemClick(answer, false)}
-              >
-                {answer}
-              </div>
-            ))}
-          </div>
+          <GameColumn
+            title="Questions"
+            items={questions}
+            matchState={matchState}
+            onItemClick={(item) => handleItemClick(item, true, questions, answers)}
+          />
+          <GameColumn
+            title="Answers"
+            items={answers}
+            matchState={matchState}
+            onItemClick={(item) => handleItemClick(item, false, questions, answers)}
+          />
         </div>
       </div>
     </div>
