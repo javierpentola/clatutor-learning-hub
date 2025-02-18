@@ -14,7 +14,7 @@ const Student = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <button 
             className="bg-[#ea384c] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/flashcards/${code}`)}
+            onClick={() => navigate(`/student/${code}/flashcards`)}
           >
             <BookOpen className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Flashcards</span>
@@ -22,7 +22,7 @@ const Student = () => {
 
           <button 
             className="bg-[#1a365d] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/learn/${code}`)}
+            onClick={() => navigate(`/student/${code}/learn`)}
           >
             <Brain className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Learn</span>
@@ -30,7 +30,7 @@ const Student = () => {
 
           <button 
             className="bg-[#8E9196] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/exam-setup/${code}`)}
+            onClick={() => navigate(`/student/${code}/exam-setup`)}
           >
             <HelpCircle className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Exam</span>
@@ -38,7 +38,7 @@ const Student = () => {
 
           <button 
             className="bg-[#ea384c] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/combine/${code}`)}
+            onClick={() => navigate(`/student/${code}/combine`)}
           >
             <Shuffle className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">Combine</span>
