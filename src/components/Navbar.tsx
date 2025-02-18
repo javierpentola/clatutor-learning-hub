@@ -7,16 +7,48 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const translations = {
+  en: {
+    index: "Index",
+    about: "About Us",
+    support: "Support Us"
+  },
+  es: {
+    index: "Inicio",
+    about: "Sobre Nosotros",
+    support: "Apóyanos"
+  },
+  vi: {
+    index: "Trang chủ",
+    about: "Về chúng tôi",
+    support: "Ủng hộ"
+  }
+};
 
 export const Navbar = () => {
   const [currentLanguage, setCurrentLanguage] = useState("English");
+  const [language, setLanguage] = useState("en");
 
   const languages = [
     { name: "English", code: "en" },
     { name: "Español", code: "es" },
     { name: "Tiếng Việt", code: "vi" },
   ];
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem("language") || "en";
+      setLanguage(newLang);
+    };
+
+    handleLanguageChange();
+    window.addEventListener("languageChange", handleLanguageChange);
+    return () => window.removeEventListener("languageChange", handleLanguageChange);
+  }, []);
+
+  const t = translations[language as keyof typeof translations];
 
   return (
     <nav className="bg-white shadow-lg border-b-2 border-[#1a365d] mb-8">
@@ -29,7 +61,7 @@ export const Navbar = () => {
               className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
             >
               <Home className="w-5 h-5 mr-2" />
-              <span>Index</span>
+              <span>{t.index}</span>
             </Link>
 
             <Link
@@ -37,7 +69,7 @@ export const Navbar = () => {
               className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
             >
               <Info className="w-5 h-5 mr-2" />
-              <span>About Us</span>
+              <span>{t.about}</span>
             </Link>
 
             <Link
@@ -45,7 +77,7 @@ export const Navbar = () => {
               className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
             >
               <Headset className="w-5 h-5 mr-2" />
-              <span>Support Us</span>
+              <span>{t.support}</span>
             </Link>
           </div>
           <div className="flex-1 flex justify-end">
