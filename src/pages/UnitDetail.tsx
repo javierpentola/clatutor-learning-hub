@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -23,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
 type Unit = {
@@ -43,7 +42,7 @@ type QuestionAnswer = {
 };
 
 const UnitDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -52,12 +51,12 @@ const UnitDetail = () => {
   const [answer, setAnswer] = useState("");
 
   const { data: unit } = useQuery({
-    queryKey: ["unit", id],
+    queryKey: ["unit", code],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("units")
         .select("*")
-        .eq("id", id)
+        .eq("code", code)
         .single();
 
       if (error) throw error;
@@ -66,24 +65,29 @@ const UnitDetail = () => {
   });
 
   const { data: questionsAnswers } = useQuery({
-    queryKey: ["questions_answers", id],
+    queryKey: ["questions_answers", unit?.id],
     queryFn: async () => {
+      if (!unit?.id) return [];
+      
       const { data, error } = await supabase
         .from("questions_answers")
         .select("*")
-        .eq("unit_id", id)
+        .eq("unit_id", unit.id)
         .order("created_at", { ascending: true });
 
       if (error) throw error;
       return data as QuestionAnswer[];
     },
+    enabled: !!unit?.id,
   });
 
   const addQuestionAnswer = useMutation({
     mutationFn: async () => {
+      if (!unit?.id) throw new Error("No unit found");
+      
       const { error } = await supabase.from("questions_answers").insert([
         {
-          unit_id: id,
+          unit_id: unit.id,
           question,
           answer,
         },
@@ -91,7 +95,7 @@ const UnitDetail = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["questions_answers", id] });
+      queryClient.invalidateQueries({ queryKey: ["questions_answers", unit?.id] });
       setIsAddQAOpen(false);
       setQuestion("");
       setAnswer("");
@@ -118,7 +122,7 @@ const UnitDetail = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["questions_answers", id] });
+      queryClient.invalidateQueries({ queryKey: ["questions_answers", unit?.id] });
       toast({
         title: "Success",
         description: "Question and answer deleted successfully",
