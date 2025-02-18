@@ -13,17 +13,17 @@ const translations = {
   en: {
     index: "Index",
     about: "About Us",
-    support: "Support Us"
+    support: "Support CLA.app"
   },
   es: {
     index: "Inicio",
     about: "Sobre Nosotros",
-    support: "Apóyanos"
+    support: "Apoya CLA.app"
   },
   vi: {
     index: "Trang chủ",
     about: "Về chúng tôi",
-    support: "Ủng hộ"
+    support: "Hỗ trợ CLA.app"
   }
 };
 
