@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,30 +32,65 @@ const Teacher = () => {
   const [isAddUnitOpen, setIsAddUnitOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [teacherId, setTeacherId] = useState<string | null>(null);
   const [editingUnit, setEditingUnit] = useState<{
     id: string;
     title: string;
     description: string | null;
   } | null>(null);
 
+  useEffect(() => {
+    const getTeacherId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setTeacherId(user.id);
+      } else {
+        navigate('/');
+        toast({
+          title: "Error",
+          description: "You must be logged in to access this page",
+          variant: "destructive",
+        });
+      }
+    };
+
+    getTeacherId();
+  }, [navigate, toast]);
+
   const { data: units } = useQuery({
     queryKey: ["units"],
     queryFn: async () => {
+      if (!teacherId) return [];
+      
       const { data, error } = await supabase
         .from("units")
         .select("*")
+        .eq("teacher_id", teacherId)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
     },
+    enabled: !!teacherId,
   });
 
   const addUnit = useMutation({
     mutationFn: async () => {
+      if (!teacherId) throw new Error("No teacher ID found");
+
+      const { data: codeResult, error: codeError } = await supabase
+        .rpc('generate_unique_unit_code');
+      
+      if (codeError) throw codeError;
+      
       const { data: newUnit, error } = await supabase
         .from("units")
-        .insert([{ title, description }])
+        .insert([{
+          title,
+          description,
+          teacher_id: teacherId,
+          code: codeResult,
+        }])
         .select()
         .single();
 
@@ -154,6 +188,8 @@ const Teacher = () => {
     }
     updateUnit.mutate();
   };
+
+  if (!teacherId) return null;
 
   return (
     <div className="container mx-auto py-8">
