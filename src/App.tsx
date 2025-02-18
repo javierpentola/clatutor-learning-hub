@@ -11,11 +11,13 @@ import Index from "./pages/Index";
 import UnitDetail from "./pages/UnitDetail";
 import { Toaster } from "@/components/ui/toaster";
 import Flashcards from "./pages/Flashcards";
+import { Navbar } from "./components/Navbar";
 
 function App() {
   return (
     <>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/teacher" element={<Teacher />} />
