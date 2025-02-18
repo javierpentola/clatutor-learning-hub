@@ -26,12 +26,12 @@ function App() {
           <Route path="/support" element={<Support />} />
           <Route path="/teacher" element={<Teacher />} />
           <Route path="/unit/:code" element={<UnitDetail />} />
-          <Route path="/unit/:code/exam-setup" element={<ExamSetup />} />
-          <Route path="/student" element={<Student />} />
+          <Route path="/student/:code" element={<Student />} />
+          <Route path="/student/:code/flashcards" element={<Flashcards />} />
           <Route path="/student/:code/combine" element={<Combine />} />
+          <Route path="/student/:code/exam-setup" element={<ExamSetup />} />
           <Route path="/student/:code/exam" element={<Exam />} />
           <Route path="/student/:code/learn" element={<Learn />} />
-          <Route path="/student/:code/flashcards" element={<Flashcards />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
