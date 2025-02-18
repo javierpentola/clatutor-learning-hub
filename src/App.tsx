@@ -9,6 +9,7 @@ import Student from "./pages/Student";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
 import About from "./pages/About";
+import Support from "./pages/Support";
 import UnitDetail from "./pages/UnitDetail";
 import { Toaster } from "@/components/ui/toaster";
 import Flashcards from "./pages/Flashcards";
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/teacher" element={<Teacher />} />
           <Route path="/unit/:code" element={<UnitDetail />} />
           <Route path="/unit/:code/exam-setup" element={<ExamSetup />} />
