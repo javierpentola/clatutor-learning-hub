@@ -24,10 +24,11 @@ export const AuthForm = () => {
         });
         if (error) throw error;
         toast({
-          title: "Success",
-          description: "Check your email to reset your password"
+          title: "¡Email enviado!",
+          description: "Revisa tu correo electrónico para restablecer tu contraseña"
         });
         setIsForgotPassword(false);
+        setEmail("");
         return;
       }
 
@@ -41,15 +42,22 @@ export const AuthForm = () => {
         });
         if (error) throw error;
         toast({
-          title: "Success",
-          description: "Please check your email to verify your account"
+          title: "¡Registro exitoso!",
+          description: "Por favor, revisa tu correo electrónico para verificar tu cuenta"
         });
+        setEmail("");
+        setPassword("");
+        setIsSignUp(false);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password
         });
         if (error) throw error;
+        toast({
+          title: "¡Bienvenido!",
+          description: "Accediendo a tu espacio de profesor..."
+        });
         navigate('/teacher');
       }
     } catch (error: any) {
@@ -70,17 +78,17 @@ export const AuthForm = () => {
     <div className="text-center w-full">
       <h1 className="text-3xl font-bold text-[#1a365d] mb-2">
         {isForgotPassword 
-          ? "Reset Password"
+          ? "Restablecer contraseña"
           : isSignUp 
-            ? "Create Account" 
-            : "Welcome Back"}
+            ? "Crear cuenta" 
+            : "Bienvenido de nuevo"}
       </h1>
       <p className="text-gray-600 mb-8">
         {isForgotPassword 
-          ? "Enter your email to reset your password"
+          ? "Ingresa tu email para restablecer tu contraseña"
           : isSignUp 
-            ? "Sign up to get started" 
-            : "Sign in to access your account"}
+            ? "Regístrate para comenzar" 
+            : "Inicia sesión para acceder a tu cuenta"}
       </p>
       <form onSubmit={handleAuth} className="space-y-4">
         <div className="text-left">
@@ -90,20 +98,20 @@ export const AuthForm = () => {
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="Enter your email"
+            placeholder="Ingresa tu email"
             required
             className="w-full h-12"
           />
         </div>
         {!isForgotPassword && (
           <div className="text-left">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Contraseña</Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Ingresa tu contraseña"
               required
               className="w-full h-12"
             />
@@ -111,22 +119,22 @@ export const AuthForm = () => {
         )}
         <Button type="submit" className="w-full bg-[#1a365d] hover:bg-[#2a4a7f] text-white h-12">
           {isForgotPassword 
-            ? "Send Reset Instructions"
+            ? "Enviar instrucciones"
             : isSignUp 
-              ? "Sign Up" 
-              : "Sign In"}
+              ? "Registrarse" 
+              : "Iniciar sesión"}
         </Button>
       </form>
       <div className="mt-4 space-y-2">
         {!isForgotPassword ? (
           <>
             <p className="text-gray-600">
-              {isSignUp ? "Already have an account? " : "Don't have an account? "}
+              {isSignUp ? "¿Ya tienes una cuenta? " : "¿No tienes una cuenta? "}
               <button 
                 onClick={() => setIsSignUp(!isSignUp)} 
                 className="text-[#1a365d] hover:underline"
               >
-                {isSignUp ? "Sign In" : "Sign Up"}
+                {isSignUp ? "Inicia sesión" : "Regístrate"}
               </button>
             </p>
             {!isSignUp && (
@@ -135,7 +143,7 @@ export const AuthForm = () => {
                   onClick={() => setIsForgotPassword(true)}
                   className="text-[#1a365d] hover:underline text-sm"
                 >
-                  Forgot your password?
+                  ¿Olvidaste tu contraseña?
                 </button>
               </p>
             )}
@@ -146,7 +154,7 @@ export const AuthForm = () => {
               onClick={handleBackToLogin}
               className="text-[#1a365d] hover:underline text-sm"
             >
-              Back to login
+              Volver al inicio de sesión
             </button>
           </p>
         )}
