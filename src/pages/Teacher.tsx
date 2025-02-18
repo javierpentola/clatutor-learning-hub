@@ -313,13 +313,6 @@ const Teacher = () => {
                 >
                   Manage Questions & Answers
                 </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => navigate(`/unit/${unit.code}/exam-setup`)}
-                >
-                  Setup Exam
-                </Button>
               </div>
             </CardContent>
           </Card>
