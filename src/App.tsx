@@ -30,7 +30,7 @@ function App() {
           <Route path="/student/:code/flashcards" element={<Flashcards />} />
           <Route path="/student/:code/combine" element={<Combine />} />
           <Route path="/student/:code/exam-setup" element={<ExamSetup />} />
-          <Route path="/student/:code/exam" element={<Exam />} />
+          <Route path="/student/:code/exam/:sessionId" element={<Exam />} />
           <Route path="/student/:code/learn" element={<Learn />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

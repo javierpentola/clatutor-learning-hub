@@ -73,7 +73,7 @@ const ExamSetup = () => {
       if (sessionError) throw sessionError;
 
       // Navigate to the exam with the session ID
-      navigate(`/exam/${sessionData.id}`);
+      navigate(`/student/${code}/exam/${sessionData.id}`);
     } catch (error: any) {
       toast({
         title: "Error",
