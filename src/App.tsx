@@ -23,8 +23,8 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/teacher" element={<Teacher />} />
-          <Route path="/teacher/:code" element={<UnitDetail />} />
-          <Route path="/teacher/:code/exam-setup" element={<ExamSetup />} />
+          <Route path="/unit/:code" element={<UnitDetail />} />
+          <Route path="/unit/:code/exam-setup" element={<ExamSetup />} />
           <Route path="/student" element={<Student />} />
           <Route path="/student/:code/combine" element={<Combine />} />
           <Route path="/student/:code/exam" element={<Exam />} />
