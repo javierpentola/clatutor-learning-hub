@@ -29,7 +29,7 @@ const Index = () => {
   return (
     <div className="min-h-screen font-roboto pb-40 md:pb-0">
       <div className="grid md:grid-cols-2 h-screen gap-4">
-        <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg shadow-lg border-2 border-gray-200">
+        <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg shadow-lg border-2 border-[#1a365d]">
           <div className="flex justify-center md:justify-start mb-12">
             <Logo size={40} />
           </div>

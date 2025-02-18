@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export const Navbar = () => {
   return (
-    <nav className="bg-white shadow-lg border-b-2 border-gray-200 mb-8">
+    <nav className="bg-white shadow-lg border-b-2 border-[#1a365d] mb-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-center h-16">
           <div className="flex space-x-12">
@@ -29,7 +29,7 @@ export const Navbar = () => {
               className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
             >
               <Headset className="w-5 h-5 mr-2" />
-              <span>Support</span>
+              <span>Support Us</span>
             </Link>
           </div>
         </div>

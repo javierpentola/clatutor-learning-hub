@@ -8,6 +8,7 @@ import Teacher from "./pages/Teacher";
 import Student from "./pages/Student";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
+import About from "./pages/About";
 import UnitDetail from "./pages/UnitDetail";
 import { Toaster } from "@/components/ui/toaster";
 import Flashcards from "./pages/Flashcards";
@@ -20,6 +21,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/about" element={<About />} />
           <Route path="/teacher" element={<Teacher />} />
           <Route path="/teacher/:code" element={<UnitDetail />} />
           <Route path="/teacher/:code/exam-setup" element={<ExamSetup />} />
