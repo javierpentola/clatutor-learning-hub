@@ -27,32 +27,34 @@ const Index = () => {
   }, [lastScrollY]);
 
   return (
-    <div className="min-h-screen font-roboto pb-40 md:pb-0">
-      <div className="grid md:grid-cols-2 h-screen gap-4">
-        <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg shadow-lg border-2 border-[#1a365d]">
-          <div className="flex justify-center md:justify-start mb-12">
-            <Logo size={40} />
-          </div>
-          <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
-            <AuthForm />
-          </div>
-        </div>
-
-        <div className="relative bg-[#1a365d] p-8 flex flex-col rounded-lg shadow-lg border-2 border-[#1a365d]">
-          <div className="flex justify-center md:justify-start mb-12">
-            <Logo size={40} className="filter brightness-0 invert" textClassName="text-white" />
-          </div>
-          <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
-            <JoinClassForm />
+    <div className="min-h-screen font-roboto pb-40 md:pb-0 px-4 py-8">
+      <div className="container mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+          <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg shadow-lg border-2 border-[#1a365d]">
+            <div className="flex justify-center md:justify-start mb-12">
+              <Logo size={40} />
+            </div>
+            <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
+              <AuthForm />
+            </div>
           </div>
 
-          <div className="hidden md:flex absolute bottom-8 right-8 flex-col gap-4">
-            <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
-              <FaHeart className="h-5 w-5" />
-            </Button>
-            <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
-              <FaDownload className="h-5 w-5" />
-            </Button>
+          <div className="relative bg-[#1a365d] p-8 flex flex-col rounded-lg shadow-lg border-2 border-[#1a365d]">
+            <div className="flex justify-center md:justify-start mb-12">
+              <Logo size={40} className="filter brightness-0 invert" textClassName="text-white" />
+            </div>
+            <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full">
+              <JoinClassForm />
+            </div>
+
+            <div className="hidden md:flex absolute bottom-8 right-8 flex-col gap-4">
+              <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
+                <FaHeart className="h-5 w-5" />
+              </Button>
+              <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
+                <FaDownload className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
