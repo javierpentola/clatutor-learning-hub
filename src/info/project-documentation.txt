@@ -1,0 +1,84 @@
+
+CLA.APP PROJECT DOCUMENTATION
+===========================
+
+Overview
+--------
+CLA.app is an educational platform designed to help students learn and practice through various interactive methods including flashcards, exams, and learning modules.
+
+Project Structure
+---------------
+/src
+  /components - Reusable UI components
+  /pages - Main page components
+  /integrations - External service integrations (e.g., Supabase)
+  /hooks - Custom React hooks
+  /lib - Utility functions and helpers
+  /info - Project documentation
+
+Main Features
+------------
+1. Student Mode:
+   - Flashcards for memorization
+   - Interactive learning modules
+   - Exam system with multiple question types
+   - Combine mode for enhanced learning
+
+2. Teacher Mode:
+   - Create and manage units
+   - Monitor student progress
+   - Generate and manage content
+
+Routes Structure
+--------------
+/ - Home page
+/about - About page
+/support - Support and donations
+/teacher - Teacher dashboard
+/unit/:code - Unit details
+/student/:code - Student dashboard
+/student/:code/flashcards - Flashcard study mode
+/student/:code/combine - Combine learning mode
+/student/:code/exam-setup - Exam configuration
+/student/:code/exam/:sessionId - Active exam session
+/student/:code/learn - Learning mode
+
+Technologies Used
+---------------
+- React with TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- Shadcn UI for components
+- Supabase for backend services
+- React Router for navigation
+
+Getting Started
+-------------
+1. Install dependencies: npm install
+2. Start development server: npm run dev
+3. Build for production: npm run build
+
+Database Structure (Supabase)
+---------------------------
+Main Tables:
+- units: Stores educational units
+- exam_sessions: Tracks exam attempts
+- questions: Stores various question types
+- student_progress: Tracks learning progress
+
+Contributing
+-----------
+This is a non-profit educational project. Contributions are welcome through:
+- Code contributions via pull requests
+- Bug reports and feature requests
+- Documentation improvements
+- Financial support through Patreon
+
+Support
+-------
+For support:
+- Visit the support page in the app
+- Submit issues through GitHub
+- Join our community forums
+
+This documentation will be updated as the project evolves.
