@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -200,7 +201,8 @@ const ExamSetup = () => {
 
       if (sessionError) throw sessionError;
 
-      navigate(`/student/${code}/exam/${sessionData.id}`);
+      // Update the navigation path to match the route in App.tsx
+      navigate(`/exam/${sessionData.id}`);
     } catch (error: any) {
       toast({
         title: t.errors.examError,
