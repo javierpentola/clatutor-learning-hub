@@ -67,7 +67,7 @@ function App() {
           <Route path="/exam-setup/:code" element={<ExamSetup />} />
           <Route path="/flashcards/:code" element={<Flashcards />} />
           <Route path="/student/:code" element={<Student />} />
-          <Route path="/combine" element={<Combine />} />
+          <Route path="/combine/:code" element={<Combine />} />
           <Route
             path="/teacher"
             element={
