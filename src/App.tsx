@@ -64,8 +64,8 @@ function App() {
           <Route path="/support" element={<Support />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/exam/:sessionId" element={<Exam />} />
-          <Route path="/exam-setup/:unitId" element={<ExamSetup />} />
-          <Route path="/flashcards/:unitId" element={<Flashcards />} />
+          <Route path="/exam-setup/:code" element={<ExamSetup />} />
+          <Route path="/flashcards/:code" element={<Flashcards />} />
           <Route path="/student/:code" element={<Student />} />
           <Route path="/combine" element={<Combine />} />
           <Route

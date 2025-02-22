@@ -16,7 +16,9 @@ const translations = {
     of: "of",
     previous: "Previous",
     next: "Next",
-    flipCard: "Flip Card"
+    flipCard: "Flip Card",
+    error: "Error Loading Flashcards",
+    errorDesc: "There was a problem loading the flashcards. Please try again."
   },
   es: {
     loading: "Cargando tarjetas de memoria...",
@@ -27,7 +29,9 @@ const translations = {
     of: "de",
     previous: "Anterior",
     next: "Siguiente",
-    flipCard: "Voltear tarjeta"
+    flipCard: "Voltear tarjeta",
+    error: "Error al cargar las tarjetas",
+    errorDesc: "Hubo un problema al cargar las tarjetas. Por favor, inténtalo de nuevo."
   },
   vi: {
     loading: "Đang tải thẻ ghi nhớ...",
@@ -38,7 +42,9 @@ const translations = {
     of: "trong số",
     previous: "Trước",
     next: "Tiếp theo",
-    flipCard: "Lật thẻ"
+    flipCard: "Lật thẻ",
+    error: "Lỗi khi tải thẻ",
+    errorDesc: "Đã xảy ra sự cố khi tải thẻ ghi nhớ. Vui lòng thử lại."
   }
 };
 
@@ -56,7 +62,7 @@ const Flashcards = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [language, setLanguage] = useState("en");
 
   useEffect(() => {
@@ -71,98 +77,87 @@ const Flashcards = () => {
   }, []);
 
   useEffect(() => {
-    if (!code) return;
-    loadFlashcards();
-  }, [code]);
-
-  const loadFlashcards = async () => {
-    try {
-      setLoading(true);
-      
-      // First get the unit by code
-      const { data: unitData, error: unitError } = await supabase
-        .from('units')
-        .select('id, title')
-        .eq('code', code)
-        .maybeSingle();
-
-      if (unitError) {
-        console.error('Error fetching unit:', unitError);
-        toast({
-          title: "Error",
-          description: "Failed to load unit",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      if (!unitData) {
-        toast({
-          title: "Error",
-          description: "Unit not found",
-          variant: "destructive",
-        });
-        navigate("/");
-        return;
-      }
-
-      // Get the questions and answers for this unit
-      const { data: qaData, error: qaError } = await supabase
-        .from('questions_answers')
-        .select('id, question, answer')
-        .eq('unit_id', unitData.id);
-
-      if (qaError) {
-        console.error('Error fetching questions:', qaError);
-        toast({
-          title: "Error",
-          description: "Failed to load flashcards",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      if (!qaData || qaData.length === 0) {
-        setCards([]);
-        setLoading(false);
-        return;
-      }
-
-      // Create or update the session
-      const tempStudentId = crypto.randomUUID();
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('flashcard_sessions')
-        .upsert({
-          unit_id: unitData.id,
-          student_id: tempStudentId,
-          total_cards: qaData.length,
-          completed_cards: 0,
-          last_accessed: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (sessionError) {
-        console.error('Error creating session:', sessionError);
-        // Continue anyway as this is not critical
-      } else {
-        setSessionId(sessionData.id);
-      }
-
-      setCards(qaData);
+    if (!code) {
+      setError("No unit code provided");
       setLoading(false);
-    } catch (error) {
-      console.error('Error loading flashcards:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load flashcards",
-        variant: "destructive",
-      });
-      setLoading(false);
+      return;
     }
-  };
+    
+    const loadFlashcards = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        console.log("Fetching unit with code:", code);
+        
+        // First get the unit by code
+        const { data: unitData, error: unitError } = await supabase
+          .from('units')
+          .select('id, title')
+          .eq('code', code)
+          .maybeSingle();
+
+        if (unitError) {
+          console.error('Error fetching unit:', unitError);
+          setError("Failed to load unit");
+          return;
+        }
+
+        if (!unitData) {
+          console.error('No unit found with code:', code);
+          setError("Unit not found");
+          return;
+        }
+
+        console.log("Found unit:", unitData);
+
+        // Get the questions and answers for this unit
+        const { data: qaData, error: qaError } = await supabase
+          .from('questions_answers')
+          .select('id, question, answer')
+          .eq('unit_id', unitData.id);
+
+        if (qaError) {
+          console.error('Error fetching questions:', qaError);
+          setError("Failed to load flashcards");
+          return;
+        }
+
+        console.log("Loaded QA data:", qaData?.length || 0, "cards");
+
+        if (!qaData || qaData.length === 0) {
+          setCards([]);
+          return;
+        }
+
+        // Create the session
+        const tempStudentId = crypto.randomUUID();
+        const { error: sessionError } = await supabase
+          .from('flashcard_sessions')
+          .insert({
+            unit_id: unitData.id,
+            student_id: tempStudentId,
+            total_cards: qaData.length,
+            completed_cards: 0,
+            last_accessed: new Date().toISOString(),
+          });
+
+        if (sessionError) {
+          console.error('Error creating session:', sessionError);
+          // Continue anyway as this is not critical
+        }
+
+        setCards(qaData);
+      } catch (error) {
+        console.error('Error loading flashcards:', error);
+        setError("Failed to load flashcards");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFlashcards();
+  }, [code, toast]);
 
   const handleNext = () => {
     if (currentCardIndex < cards.length - 1) {
@@ -184,6 +179,7 @@ const Flashcards = () => {
 
   const t = translations[language as keyof typeof translations];
 
+  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -192,6 +188,23 @@ const Flashcards = () => {
     );
   }
 
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen p-8">
+        <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
+        </Button>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">{t.error}</h2>
+          <p className="mb-4">{t.errorDesc}</p>
+          <p className="text-sm text-gray-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state
   if (cards.length === 0) {
     return (
       <div className="min-h-screen p-8">
