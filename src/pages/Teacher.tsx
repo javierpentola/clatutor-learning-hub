@@ -25,6 +25,78 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Pencil, Trash2, FolderPlus } from "lucide-react";
 
+const translations = {
+  en: {
+    title: "My Units",
+    addUnit: "Add Unit",
+    createUnit: "Create a new unit for your class.",
+    unitTitle: "Title",
+    description: "Description (optional)",
+    enterTitle: "Enter unit title",
+    enterDescription: "Enter unit description",
+    cancel: "Cancel",
+    add: "Add",
+    save: "Save",
+    manageQA: "Manage Questions & Answers",
+    loading: "Loading...",
+    errors: {
+      titleRequired: "Title is required",
+      loginRequired: "You must be logged in to access this page",
+    },
+    success: {
+      unitCreated: "Unit created successfully",
+      unitUpdated: "Unit updated successfully",
+      unitDeleted: "Unit deleted successfully",
+    },
+  },
+  es: {
+    title: "Mis Unidades",
+    addUnit: "Añadir Unidad",
+    createUnit: "Crea una nueva unidad para tu clase.",
+    unitTitle: "Título",
+    description: "Descripción (opcional)",
+    enterTitle: "Ingresa el título de la unidad",
+    enterDescription: "Ingresa la descripción de la unidad",
+    cancel: "Cancelar",
+    add: "Añadir",
+    save: "Guardar",
+    manageQA: "Gestionar Preguntas y Respuestas",
+    loading: "Cargando...",
+    errors: {
+      titleRequired: "El título es requerido",
+      loginRequired: "Debes iniciar sesión para acceder a esta página",
+    },
+    success: {
+      unitCreated: "Unidad creada exitosamente",
+      unitUpdated: "Unidad actualizada exitosamente",
+      unitDeleted: "Unidad eliminada exitosamente",
+    },
+  },
+  vi: {
+    title: "Đơn vị của tôi",
+    addUnit: "Thêm đơn vị",
+    createUnit: "Tạo một đơn vị mới cho lớp của bạn.",
+    unitTitle: "Tiêu đề",
+    description: "Mô tả (tùy chọn)",
+    enterTitle: "Nhập tiêu đề đơn vị",
+    enterDescription: "Nhập mô tả đơn vị",
+    cancel: "Hủy",
+    add: "Thêm",
+    save: "Lưu",
+    manageQA: "Quản lý Câu hỏi & Đáp án",
+    loading: "Đang tải...",
+    errors: {
+      titleRequired: "Cần có tiêu đề",
+      loginRequired: "Bạn phải đăng nhập để truy cập trang này",
+    },
+    success: {
+      unitCreated: "Tạo đơn vị thành công",
+      unitUpdated: "Cập nhật đơn vị thành công",
+      unitDeleted: "Xóa đơn vị thành công",
+    },
+  },
+};
+
 const Teacher = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,6 +105,7 @@ const Teacher = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [teacherId, setTeacherId] = useState<string | null>(null);
+  const [language, setLanguage] = useState("en");
   const [editingUnit, setEditingUnit] = useState<{
     id: string;
     title: string;
@@ -48,16 +121,27 @@ const Teacher = () => {
         navigate('/');
         toast({
           title: "Error",
-          description: "You must be logged in to access this page",
+          description: translations[language as keyof typeof translations].errors.loginRequired,
           variant: "destructive",
         });
       }
     };
 
-    getTeacherId();
-  }, [navigate, toast]);
+    const currentLang = localStorage.getItem("language") || "en";
+    setLanguage(currentLang);
 
-  const { data: units } = useQuery({
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem("language") || "en";
+      setLanguage(newLang);
+    };
+
+    window.addEventListener("languageChange", handleLanguageChange);
+    getTeacherId();
+
+    return () => window.removeEventListener("languageChange", handleLanguageChange);
+  }, [navigate, toast, language]);
+
+  const { data: units, isLoading } = useQuery({
     queryKey: ["units"],
     queryFn: async () => {
       if (!teacherId) return [];
@@ -73,6 +157,8 @@ const Teacher = () => {
     },
     enabled: !!teacherId,
   });
+
+  const t = translations[language as keyof typeof translations];
 
   const addUnit = useMutation({
     mutationFn: async () => {
@@ -104,7 +190,7 @@ const Teacher = () => {
       setDescription("");
       toast({
         title: "Success",
-        description: "Unit created successfully",
+        description: t.success.unitCreated,
       });
     },
     onError: (error: any) => {
@@ -132,7 +218,7 @@ const Teacher = () => {
       setEditingUnit(null);
       toast({
         title: "Success",
-        description: "Unit updated successfully",
+        description: t.success.unitUpdated,
       });
     },
     onError: (error: any) => {
@@ -153,7 +239,7 @@ const Teacher = () => {
       queryClient.invalidateQueries({ queryKey: ["units"] });
       toast({
         title: "Success",
-        description: "Unit deleted successfully",
+        description: t.success.unitDeleted,
       });
     },
     onError: (error: any) => {
@@ -169,7 +255,7 @@ const Teacher = () => {
     if (!title) {
       toast({
         title: "Error",
-        description: "Title is required",
+        description: t.errors.titleRequired,
         variant: "destructive",
       });
       return;
@@ -181,7 +267,7 @@ const Teacher = () => {
     if (!editingUnit?.title) {
       toast({
         title: "Error",
-        description: "Title is required",
+        description: t.errors.titleRequired,
         variant: "destructive",
       });
       return;
@@ -189,49 +275,57 @@ const Teacher = () => {
     updateUnit.mutate();
   };
 
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center">{t.loading}</div>
+      </div>
+    );
+  }
+
   if (!teacherId) return null;
 
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">My Units</h1>
+        <h1 className="text-3xl font-bold">{t.title}</h1>
         <Dialog open={isAddUnitOpen} onOpenChange={setIsAddUnitOpen}>
           <DialogTrigger asChild>
             <Button>
               <FolderPlus className="mr-2 h-4 w-4" />
-              Add Unit
+              {t.addUnit}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Unit</DialogTitle>
-              <DialogDescription>Create a new unit for your class.</DialogDescription>
+              <DialogTitle>{t.addUnit}</DialogTitle>
+              <DialogDescription>{t.createUnit}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">{t.unitTitle}</Label>
                 <Input
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter unit title"
+                  placeholder={t.enterTitle}
                 />
               </div>
               <div>
-                <Label htmlFor="description">Description (optional)</Label>
+                <Label htmlFor="description">{t.description}</Label>
                 <Textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter unit description"
+                  placeholder={t.enterDescription}
                 />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddUnitOpen(false)}>
-                Cancel
+                {t.cancel}
               </Button>
-              <Button onClick={handleAddUnit}>Add</Button>
+              <Button onClick={handleAddUnit}>{t.add}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -259,12 +353,12 @@ const Teacher = () => {
                     }
                   />
                   <div className="flex space-x-2">
-                    <Button onClick={handleUpdateUnit}>Save</Button>
+                    <Button onClick={handleUpdateUnit}>{t.save}</Button>
                     <Button
                       variant="outline"
                       onClick={() => setEditingUnit(null)}
                     >
-                      Cancel
+                      {t.cancel}
                     </Button>
                   </div>
                 </div>
@@ -311,7 +405,7 @@ const Teacher = () => {
                   className="w-full"
                   onClick={() => navigate(`/unit/${unit.code}`)}
                 >
-                  Manage Questions & Answers
+                  {t.manageQA}
                 </Button>
               </div>
             </CardContent>
