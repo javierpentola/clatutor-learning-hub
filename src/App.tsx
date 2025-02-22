@@ -62,7 +62,7 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/learn" element={<Learn />} />
+          <Route path="/learn/:code" element={<Learn />} />
           <Route path="/exam/:sessionId" element={<Exam />} />
           <Route path="/exam-setup/:code" element={<ExamSetup />} />
           <Route path="/flashcards/:code" element={<Flashcards />} />

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Brain, Timer } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -15,6 +15,7 @@ interface QAPair {
 
 const QuizGame = () => {
   const { code } = useParams();
+  const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
@@ -24,23 +25,51 @@ const QuizGame = () => {
   const { data: qaPairs, isLoading } = useQuery({
     queryKey: ["qa_pairs", code],
     queryFn: async () => {
+      if (!code) throw new Error("No unit code provided");
+
       const { data: unit, error: unitError } = await supabase
         .from("units")
         .select("id")
         .eq("code", code)
         .single();
 
-      if (unitError) throw unitError;
+      if (unitError) {
+        console.error("Error fetching unit:", unitError);
+        throw unitError;
+      }
+
+      if (!unit) {
+        throw new Error("Unit not found");
+      }
+
+      console.log("Found unit:", unit);
 
       const { data: qaData, error: qaError } = await supabase
         .from("questions_answers")
         .select("id, question, answer")
         .eq("unit_id", unit.id);
 
-      if (qaError) throw qaError;
+      if (qaError) {
+        console.error("Error fetching QA pairs:", qaError);
+        throw qaError;
+      }
+
+      console.log("Loaded QA pairs:", qaData?.length || 0);
+
+      if (!qaData || qaData.length === 0) {
+        throw new Error("No questions available");
+      }
+
       return qaData as QAPair[];
     },
     enabled: !!code,
+    retry: false,
+    onError: (error: Error) => {
+      toast(error.message || "Failed to load questions");
+      if (error.message === "Unit not found") {
+        navigate("/");
+      }
+    }
   });
 
   useEffect(() => {
