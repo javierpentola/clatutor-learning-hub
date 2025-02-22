@@ -63,15 +63,25 @@ const QuizGame = () => {
     },
     enabled: !!code,
     retry: false,
-    onSettled: (_data, error: Error | null) => {
-      if (error) {
-        toast(error.message || "Failed to load questions");
-        if (error.message === "Unit not found") {
-          navigate("/");
-        }
-      }
+    meta: {
+      errorMessage: "Failed to load questions"
     }
   });
+
+  useEffect(() => {
+    const handleError = async (error: Error) => {
+      toast(error.message || "Failed to load questions");
+      if (error.message === "Unit not found") {
+        navigate("/");
+      }
+    };
+
+    if (isLoading) return;
+
+    if (!qaPairs && !isLoading) {
+      handleError(new Error("Failed to load questions"));
+    }
+  }, [qaPairs, isLoading, navigate]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
