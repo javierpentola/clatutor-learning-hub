@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -111,6 +112,7 @@ const Teacher = () => {
     title: string;
     description: string | null;
   } | null>(null);
+  const [deletingUnitId, setDeletingUnitId] = useState<string | null>(null);
 
   useEffect(() => {
     const getTeacherId = async () => {
@@ -232,17 +234,28 @@ const Teacher = () => {
 
   const deleteUnit = useMutation({
     mutationFn: async (unitId: string) => {
-      const { error } = await supabase.from("units").delete().eq("id", unitId);
-      if (error) throw error;
+      console.log("Deleting unit:", unitId); // Debug log
+      const { error } = await supabase
+        .from("units")
+        .delete()
+        .eq("id", unitId);
+      
+      if (error) {
+        console.error("Delete error:", error); // Debug log
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["units"] });
+      setDeletingUnitId(null);
       toast({
         title: "Success",
         description: t.success.unitDeleted,
       });
     },
     onError: (error: any) => {
+      console.error("Delete mutation error:", error); // Debug log
+      setDeletingUnitId(null);
       toast({
         title: "Error",
         description: error.message,
@@ -273,6 +286,15 @@ const Teacher = () => {
       return;
     }
     updateUnit.mutate();
+  };
+
+  const handleDeleteUnit = async (unitId: string) => {
+    setDeletingUnitId(unitId);
+    try {
+      await deleteUnit.mutateAsync(unitId);
+    } catch (error) {
+      console.error("Error in handleDeleteUnit:", error);
+    }
   };
 
   if (isLoading) {
@@ -325,7 +347,9 @@ const Teacher = () => {
               <Button variant="outline" onClick={() => setIsAddUnitOpen(false)}>
                 {t.cancel}
               </Button>
-              <Button onClick={handleAddUnit}>{t.add}</Button>
+              <Button onClick={handleAddUnit} disabled={addUnit.isPending}>
+                {t.add}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -353,7 +377,9 @@ const Teacher = () => {
                     }
                   />
                   <div className="flex space-x-2">
-                    <Button onClick={handleUpdateUnit}>{t.save}</Button>
+                    <Button onClick={handleUpdateUnit} disabled={updateUnit.isPending}>
+                      {t.save}
+                    </Button>
                     <Button
                       variant="outline"
                       onClick={() => setEditingUnit(null)}
@@ -387,7 +413,8 @@ const Teacher = () => {
                     <Button
                       variant="destructive"
                       size="icon"
-                      onClick={() => deleteUnit.mutate(unit.id)}
+                      onClick={() => handleDeleteUnit(unit.id)}
+                      disabled={deletingUnitId === unit.id}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
