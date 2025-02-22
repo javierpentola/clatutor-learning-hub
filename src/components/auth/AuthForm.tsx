@@ -30,58 +30,7 @@ const translations = {
     noAccount: "Don't have an account? ",
     signIn: "Sign in",
     signUp: "Sign up",
-    backToLogin: "Back to login"
-  },
-  es: {
-    title: {
-      default: "Bienvenido de nuevo",
-      signup: "Crear cuenta",
-      forgot: "Restablecer contraseña"
-    },
-    subtitle: {
-      default: "Inicia sesión para acceder a tu cuenta",
-      signup: "Regístrate para comenzar",
-      forgot: "Ingresa tu email para restablecer tu contraseña"
-    },
-    email: "Email",
-    password: "Contraseña",
-    button: {
-      default: "Iniciar sesión",
-      signup: "Registrarse",
-      forgot: "Enviar instrucciones"
-    },
-    forgotPassword: "¿Olvidaste tu contraseña?",
-    haveAccount: "¿Ya tienes una cuenta? ",
-    noAccount: "¿No tienes una cuenta? ",
-    signIn: "Inicia sesión",
-    signUp: "Regístrate",
-    backToLogin: "Volver al inicio de sesión"
-  },
-  vi: {
-    title: {
-      default: "Chào mừng trở lại",
-      signup: "Tạo tài khoản",
-      forgot: "Đặt lại mật khẩu"
-    },
-    subtitle: {
-      default: "Đăng nhập để truy cập tài khoản của bạn",
-      signup: "Đăng ký để bắt đầu",
-      forgot: "Nhập email của bạn để đặt lại mật khẩu"
-    },
-    email: "Email",
-    password: "Mật khẩu",
-    button: {
-      default: "Đăng nhập",
-      signup: "Đăng ký",
-      forgot: "Gửi hướng dẫn"
-    },
-    forgotPassword: "Quên mật khẩu?",
-    haveAccount: "Đã có tài khoản? ",
-    noAccount: "Chưa có tài khoản? ",
-    signIn: "Đăng nhập",
-    signUp: "Đăng ký",
-    backToLogin: "Quay lại đăng nhập"
-  },
+    backToLogin: "Back to login",
     success: {
       signUp: "Successful registration!",
       checkEmail: "Please check your email to verify your account",
@@ -112,7 +61,13 @@ const translations = {
     noAccount: "¿No tienes una cuenta? ",
     signIn: "Inicia sesión",
     signUp: "Regístrate",
-    backToLogin: "Volver al inicio de sesión"
+    backToLogin: "Volver al inicio de sesión",
+    success: {
+      signUp: "¡Registro exitoso!",
+      checkEmail: "Por favor, revisa tu correo electrónico para verificar tu cuenta",
+      welcome: "¡Bienvenido!",
+      accessing: "Accediendo a tu espacio de profesor..."
+    }
   },
   vi: {
     title: {
@@ -137,8 +92,7 @@ const translations = {
     noAccount: "Chưa có tài khoản? ",
     signIn: "Đăng nhập",
     signUp: "Đăng ký",
-    backToLogin: "Quay lại đăng nhập"
-  },
+    backToLogin: "Quay lại đăng nhập",
     success: {
       signUp: "Đăng ký thành công!",
       checkEmail: "Vui lòng kiểm tra email của bạn để xác minh tài khoản",
