@@ -6,6 +6,42 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
+const translations = {
+  en: {
+    loading: "Loading flashcards...",
+    noFlashcards: "No Flashcards Available",
+    noFlashcardsDesc: "This unit doesn't have any flashcards yet.",
+    back: "Back",
+    card: "Card",
+    of: "of",
+    previous: "Previous",
+    next: "Next",
+    flipCard: "Flip Card"
+  },
+  es: {
+    loading: "Cargando tarjetas de memoria...",
+    noFlashcards: "No hay tarjetas disponibles",
+    noFlashcardsDesc: "Esta unidad aún no tiene tarjetas de memoria.",
+    back: "Volver",
+    card: "Tarjeta",
+    of: "de",
+    previous: "Anterior",
+    next: "Siguiente",
+    flipCard: "Voltear tarjeta"
+  },
+  vi: {
+    loading: "Đang tải thẻ ghi nhớ...",
+    noFlashcards: "Không có thẻ ghi nhớ",
+    noFlashcardsDesc: "Đơn vị này chưa có thẻ ghi nhớ nào.",
+    back: "Quay lại",
+    card: "Thẻ",
+    of: "trong số",
+    previous: "Trước",
+    next: "Tiếp theo",
+    flipCard: "Lật thẻ"
+  }
+};
+
 interface FlashCard {
   id: string;
   question: string;
@@ -21,6 +57,18 @@ const Flashcards = () => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem("language") || "en";
+      setLanguage(newLang);
+    };
+
+    handleLanguageChange();
+    window.addEventListener("languageChange", handleLanguageChange);
+    return () => window.removeEventListener("languageChange", handleLanguageChange);
+  }, []);
 
   useEffect(() => {
     if (!code) return;
@@ -110,10 +158,12 @@ const Flashcards = () => {
     setIsFlipped(!isFlipped);
   };
 
+  const t = translations[language as keyof typeof translations];
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading flashcards...</div>
+        <div className="text-xl">{t.loading}</div>
       </div>
     );
   }
@@ -122,11 +172,11 @@ const Flashcards = () => {
     return (
       <div className="min-h-screen p-8">
         <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
         </Button>
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">No Flashcards Available</h2>
-          <p>This unit doesn't have any flashcards yet.</p>
+          <h2 className="text-2xl font-bold mb-4">{t.noFlashcards}</h2>
+          <p>{t.noFlashcardsDesc}</p>
         </div>
       </div>
     );
@@ -135,14 +185,14 @@ const Flashcards = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
       </Button>
 
       <div className="max-w-3xl mx-auto">
         {/* Progress indicator */}
         <div className="text-center mb-4">
           <p className="text-lg font-medium">
-            Card {currentCardIndex + 1} of {cards.length}
+            {t.card} {currentCardIndex + 1} {t.of} {cards.length}
           </p>
         </div>
 
@@ -173,16 +223,16 @@ const Flashcards = () => {
             disabled={currentCardIndex === 0}
             variant="outline"
           >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+            <ChevronLeft className="mr-2 h-4 w-4" /> {t.previous}
           </Button>
           <Button onClick={handleFlip} variant="secondary">
-            Flip Card
+            {t.flipCard}
           </Button>
           <Button
             onClick={handleNext}
             disabled={currentCardIndex === cards.length - 1}
           >
-            Next <ChevronRight className="ml-2 h-4 w-4" />
+            {t.next} <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
