@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -201,7 +200,6 @@ const ExamSetup = () => {
 
       if (sessionError) throw sessionError;
 
-      // Update the navigation path to match the route in App.tsx
       navigate(`/exam/${sessionData.id}`);
     } catch (error: any) {
       toast({
@@ -227,7 +225,7 @@ const ExamSetup = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
-        <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back
       </Button>
 
       <div className="max-w-2xl mx-auto">

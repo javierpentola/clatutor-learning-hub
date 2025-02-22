@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,6 @@ const Exam = () => {
 
       if (questionsError) throw questionsError;
 
-      // Transform the data to match our ExamQuestion interface with proper type casting
       const transformedQuestions: ExamQuestion[] = questionsData.map(q => ({
         id: q.id,
         question: q.question,
@@ -156,12 +154,12 @@ const Exam = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 py-6 md:p-8">
       <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back
       </Button>
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {!examCompleted ? (
           <>
             <h1 className="text-3xl font-bold mb-8">Exam</h1>

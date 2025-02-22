@@ -182,6 +182,10 @@ const QuizGame = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 py-6 md:p-8">
+      <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back
+      </Button>
+
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 md:mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-center sm:text-left">Quiz Game</h1>
