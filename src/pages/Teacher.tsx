@@ -239,48 +239,12 @@ const Teacher = () => {
 
   const deleteUnit = useMutation({
     mutationFn: async (unitId: string) => {
-      console.log("Deleting unit:", unitId);
-
-      // First check if the unit has any questions
-      const { data: questions, error: checkError } = await supabase
-        .from("questions_answers")
-        .select("id")
-        .eq("unit_id", unitId);
-
-      if (checkError) throw checkError;
-
-      // If there are no questions, we can delete the unit directly
-      if (!questions || questions.length === 0) {
-        const { error: unitError } = await supabase
-          .from("units")
-          .delete()
-          .eq("id", unitId);
-        
-        if (unitError) throw unitError;
-        return;
-      }
-
-      // If there are questions, we need to delete them first
-      const { error: questionsError } = await supabase
-        .from("questions_answers")
-        .delete()
-        .eq("unit_id", unitId);
-      
-      if (questionsError) {
-        console.error("Delete questions error:", questionsError);
-        throw questionsError;
-      }
-
-      // Then delete the unit
       const { error: unitError } = await supabase
         .from("units")
         .delete()
         .eq("id", unitId);
       
-      if (unitError) {
-        console.error("Delete unit error:", unitError);
-        throw unitError;
-      }
+      if (unitError) throw unitError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["units"] });
