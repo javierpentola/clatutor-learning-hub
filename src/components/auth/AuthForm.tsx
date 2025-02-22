@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,6 +81,70 @@ const translations = {
     signIn: "Đăng nhập",
     signUp: "Đăng ký",
     backToLogin: "Quay lại đăng nhập"
+  },
+    success: {
+      signUp: "Successful registration!",
+      checkEmail: "Please check your email to verify your account",
+      welcome: "Welcome!",
+      accessing: "Accessing your teacher space..."
+    }
+  },
+  es: {
+    title: {
+      default: "Bienvenido de nuevo",
+      signup: "Crear cuenta",
+      forgot: "Restablecer contraseña"
+    },
+    subtitle: {
+      default: "Inicia sesión para acceder a tu cuenta",
+      signup: "Regístrate para comenzar",
+      forgot: "Ingresa tu email para restablecer tu contraseña"
+    },
+    email: "Email",
+    password: "Contraseña",
+    button: {
+      default: "Iniciar sesión",
+      signup: "Registrarse",
+      forgot: "Enviar instrucciones"
+    },
+    forgotPassword: "¿Olvidaste tu contraseña?",
+    haveAccount: "¿Ya tienes una cuenta? ",
+    noAccount: "¿No tienes una cuenta? ",
+    signIn: "Inicia sesión",
+    signUp: "Regístrate",
+    backToLogin: "Volver al inicio de sesión"
+  },
+  vi: {
+    title: {
+      default: "Chào mừng trở lại",
+      signup: "Tạo tài khoản",
+      forgot: "Đặt lại mật khẩu"
+    },
+    subtitle: {
+      default: "Đăng nhập để truy cập tài khoản của bạn",
+      signup: "Đăng ký để bắt đầu",
+      forgot: "Nhập email của bạn để đặt lại mật khẩu"
+    },
+    email: "Email",
+    password: "Mật khẩu",
+    button: {
+      default: "Đăng nhập",
+      signup: "Đăng ký",
+      forgot: "Gửi hướng dẫn"
+    },
+    forgotPassword: "Quên mật khẩu?",
+    haveAccount: "Đã có tài khoản? ",
+    noAccount: "Chưa có tài khoản? ",
+    signIn: "Đăng nhập",
+    signUp: "Đăng ký",
+    backToLogin: "Quay lại đăng nhập"
+  },
+    success: {
+      signUp: "Đăng ký thành công!",
+      checkEmail: "Vui lòng kiểm tra email của bạn để xác minh tài khoản",
+      welcome: "Chào mừng!",
+      accessing: "Đang truy cập không gian giáo viên của bạn..."
+    }
   }
 };
 
@@ -116,8 +179,8 @@ export const AuthForm = () => {
         });
         if (error) throw error;
         toast({
-          title: "Email enviado!",
-          description: "Revisa tu correo electrónico para restablecer tu contraseña"
+          title: t.success.checkEmail,
+          description: ""
         });
         setIsForgotPassword(false);
         setEmail("");
@@ -134,8 +197,8 @@ export const AuthForm = () => {
         });
         if (error) throw error;
         toast({
-          title: "¡Registro exitoso!",
-          description: "Por favor, revisa tu correo electrónico para verificar tu cuenta"
+          title: t.success.signUp,
+          description: t.success.checkEmail
         });
         setEmail("");
         setPassword("");
@@ -147,8 +210,8 @@ export const AuthForm = () => {
         });
         if (error) throw error;
         toast({
-          title: "¡Bienvenido!",
-          description: "Accediendo a tu espacio de profesor..."
+          title: t.success.welcome,
+          description: t.success.accessing
         });
         navigate('/teacher');
       }
