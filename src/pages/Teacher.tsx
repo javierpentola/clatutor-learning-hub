@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { Pencil, Trash2, FolderPlus } from "lucide-react";
+import { Pencil, Trash2, FolderPlus, ArrowLeft } from "lucide-react";
 import { DeleteUnitButton } from "@/components/units/DeleteUnitButton";
 
 const translations = {
@@ -311,6 +312,15 @@ const Teacher = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <Button
+        variant="outline"
+        size="sm"
+        className="mb-4"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Go Back
+      </Button>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">{t.title}</h1>
         <Dialog open={isAddUnitOpen} onOpenChange={setIsAddUnitOpen}>
@@ -426,7 +436,7 @@ const Teacher = () => {
                   className="w-full"
                   onClick={() => navigate(`/unit/${unit.code}`)}
                 >
-                  Manage Questions & Answers
+                  {t.manageQA}
                 </Button>
                 <DeleteUnitButton unitId={unit.id} />
               </div>
