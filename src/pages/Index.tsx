@@ -1,4 +1,3 @@
-
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { FaHeart, FaDownload } from "react-icons/fa";
@@ -7,13 +6,11 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import { JoinClassForm } from "@/components/auth/JoinClassForm";
 import { SupportDialog } from "@/components/dialogs/SupportDialog";
 import { DownloadDialog } from "@/components/dialogs/DownloadDialog";
-
 const Index = () => {
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [showMobileButtons, setShowMobileButtons] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -25,9 +22,7 @@ const Index = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
-
-  return (
-    <div className="min-h-screen font-roboto pb-40 md:pb-0 px-4 py-8">
+  return <div className="min-h-screen font-roboto pb-40 md:pb-0 px-4 py-8">
       <div className="container mx-auto">
         <div className="grid md:grid-cols-2 gap-6 max-w-7xl mx-auto">
           <div className="relative bg-gray-50 p-8 flex flex-col rounded-lg shadow-lg border-2 border-[#1a365d]">
@@ -48,12 +43,8 @@ const Index = () => {
             </div>
 
             <div className="hidden md:flex absolute bottom-8 right-8 flex-col gap-4">
-              <Button variant="outline" onClick={() => setShowSupportDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
-                <FaHeart className="h-5 w-5" />
-              </Button>
-              <Button variant="outline" onClick={() => setShowDownloadDialog(true)} className="text-[#1a365d] bg-white hover:bg-gray-50 rounded-full w-12 h-12 p-0 border-2 border-white">
-                <FaDownload className="h-5 w-5" />
-              </Button>
+              
+              
             </div>
           </div>
         </div>
@@ -70,8 +61,6 @@ const Index = () => {
 
       <SupportDialog open={showSupportDialog} onOpenChange={setShowSupportDialog} />
       <DownloadDialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog} />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
