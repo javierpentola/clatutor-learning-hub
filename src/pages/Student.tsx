@@ -53,7 +53,7 @@ const Student = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <button 
             className="bg-[#ea384c] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/student/${code}/flashcards`)}
+            onClick={() => navigate(`/flashcards/${code}`)}
           >
             <BookOpen className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">{t.flashcards}</span>
@@ -61,7 +61,7 @@ const Student = () => {
 
           <button 
             className="bg-[#1a365d] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/student/${code}/learn`)}
+            onClick={() => navigate(`/learn/${code}`)}
           >
             <Brain className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">{t.learn}</span>
@@ -69,7 +69,7 @@ const Student = () => {
 
           <button 
             className="bg-[#8E9196] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/student/${code}/exam-setup`)}
+            onClick={() => navigate(`/exam-setup/${code}`)}
           >
             <HelpCircle className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">{t.exam}</span>
@@ -77,7 +77,7 @@ const Student = () => {
 
           <button 
             className="bg-[#ea384c] text-white p-8 rounded-xl hover:opacity-90 transition-opacity text-left"
-            onClick={() => navigate(`/student/${code}/combine`)}
+            onClick={() => navigate(`/combine/${code}`)}
           >
             <Shuffle className="w-8 h-8 mb-4" />
             <span className="text-2xl font-semibold">{t.combine}</span>
