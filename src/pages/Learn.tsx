@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -13,6 +12,66 @@ interface QAPair {
   answer: string;
 }
 
+const translations = {
+  en: {
+    loading: "Loading questions and answers...",
+    quizGame: "Quiz Game",
+    startGame: "Start Game",
+    question: "Question",
+    of: "of",
+    score: "Score",
+    gameOver: "Game Over",
+    finalScore: "Final score",
+    points: "points",
+    gameStart: "Game starts! You have 30 seconds per question",
+    correctAnswer: "Correct answer! +100 points 🎯",
+    wrongAnswer: "Wrong answer 😢",
+    timeUp: "Time's up!",
+    back: "Back",
+    noQuestions: "No questions available",
+    noQuestionsYet: "This unit doesn't have any questions yet.",
+    loadError: "Failed to load questions"
+  },
+  es: {
+    loading: "Cargando preguntas y respuestas...",
+    quizGame: "Juego de Preguntas",
+    startGame: "Comenzar Juego",
+    question: "Pregunta",
+    of: "de",
+    score: "Puntuación",
+    gameOver: "Juego Terminado",
+    finalScore: "Puntuación final",
+    points: "puntos",
+    gameStart: "¡Comienza el juego! Tienes 30 segundos por pregunta",
+    correctAnswer: "¡Respuesta correcta! +100 puntos 🎯",
+    wrongAnswer: "Respuesta incorrecta 😢",
+    timeUp: "¡Se acabó el tiempo!",
+    back: "Volver",
+    noQuestions: "No hay preguntas disponibles",
+    noQuestionsYet: "Esta unidad aún no tiene preguntas.",
+    loadError: "Error al cargar las preguntas"
+  },
+  vi: {
+    loading: "Đang tải câu hỏi và câu trả lời...",
+    quizGame: "Trò chơi câu đố",
+    startGame: "Bắt đầu trò chơi",
+    question: "Câu hỏi",
+    of: "của",
+    score: "Điểm số",
+    gameOver: "Trò chơi kết thúc",
+    finalScore: "Điểm số cuối cùng",
+    points: "điểm",
+    gameStart: "Trò chơi bắt đầu! Bạn có 30 giây cho mỗi câu hỏi",
+    correctAnswer: "Câu trả lời đúng! +100 điểm 🎯",
+    wrongAnswer: "Câu trả lời sai 😢",
+    timeUp: "Hết giờ!",
+    back: "Quay lại",
+    noQuestions: "Không có câu hỏi",
+    noQuestionsYet: "Đơn vị này chưa có câu hỏi nào.",
+    loadError: "Không thể tải câu hỏi"
+  }
+};
+
 const QuizGame = () => {
   const { code } = useParams();
   const navigate = useNavigate();
@@ -21,6 +80,20 @@ const QuizGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
   const [options, setOptions] = useState<string[]>([]);
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem("language") || "en";
+      setLanguage(newLang);
+    };
+
+    handleLanguageChange();
+    window.addEventListener("languageChange", handleLanguageChange);
+    return () => window.removeEventListener("languageChange", handleLanguageChange);
+  }, []);
+
+  const t = translations[language as keyof typeof translations];
 
   const { data: qaPairs, isLoading } = useQuery({
     queryKey: ["qa_pairs", code],
@@ -114,7 +187,7 @@ const QuizGame = () => {
 
   const startGame = () => {
     if (!qaPairs || qaPairs.length === 0) {
-      toast("No hay preguntas y respuestas disponibles para esta unidad");
+      toast(t.noQuestionsYet);
       return;
     }
     setGameStarted(true);
@@ -125,7 +198,7 @@ const QuizGame = () => {
       qaPairs[0].answer,
       qaPairs.map((qa) => qa.answer)
     );
-    toast("¡Comienza el juego! Tienes 30 segundos por pregunta");
+    toast(t.gameStart);
   };
 
   const handleAnswer = (selectedAnswer: string) => {
@@ -135,9 +208,9 @@ const QuizGame = () => {
     
     if (isCorrect) {
       setScore((prev) => prev + 100);
-      toast("¡Respuesta correcta! +100 puntos 🎯");
+      toast(t.correctAnswer);
     } else {
-      toast("Respuesta incorrecta 😢");
+      toast(t.wrongAnswer);
     }
 
     if (currentQuestion < qaPairs.length - 1) {
@@ -155,7 +228,7 @@ const QuizGame = () => {
   const handleTimeUp = () => {
     if (!qaPairs) return;
     
-    toast("¡Se acabó el tiempo!");
+    toast(t.timeUp);
     if (currentQuestion < qaPairs.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
       setTimeLeft(30);
@@ -170,13 +243,13 @@ const QuizGame = () => {
 
   const handleGameOver = () => {
     setGameStarted(false);
-    toast(`¡Juego terminado! Puntuación final: ${score} puntos`);
+    toast(`${t.gameOver}! ${t.finalScore}: ${score} ${t.points}`);
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8 flex items-center justify-center">
-        <p className="text-xl">Cargando preguntas y respuestas...</p>
+        <p className="text-xl">{t.loading}</p>
       </div>
     );
   }
@@ -184,16 +257,16 @@ const QuizGame = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 py-6 md:p-8">
       <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
       </Button>
 
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-center sm:text-left">Quiz Game</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-center sm:text-left">{t.quizGame}</h1>
           {!gameStarted && (
             <Button onClick={startGame} className="w-full sm:w-auto flex items-center justify-center gap-2">
               <Brain className="w-5 h-5" />
-              Comenzar Juego
+              {t.startGame}
             </Button>
           )}
         </div>
@@ -202,7 +275,7 @@ const QuizGame = () => {
           <div className="space-y-6 md:space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/50 p-4 rounded-lg">
               <div className="text-lg md:text-xl font-semibold text-center sm:text-left">
-                Pregunta {currentQuestion + 1} de {qaPairs.length}
+                {t.question} {currentQuestion + 1} {t.of} {qaPairs.length}
               </div>
               <div className="flex items-center gap-2 text-lg md:text-xl font-semibold">
                 <Timer className="w-5 h-5" />
@@ -230,15 +303,17 @@ const QuizGame = () => {
             </div>
 
             <div className="text-center text-xl md:text-2xl font-bold bg-white/50 p-4 rounded-lg">
-              Puntuación: {score}
+              {t.score}: {score}
             </div>
           </div>
         )}
 
         {!gameStarted && score > 0 && (
           <div className="text-center mt-8 bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl md:text-2xl font-bold mb-4">Juego Terminado</h2>
-            <p className="text-lg md:text-xl">Puntuación final: {score} puntos</p>
+            <h2 className="text-xl md:text-2xl font-bold mb-4">{t.gameOver}</h2>
+            <p className="text-lg md:text-xl">
+              {t.finalScore}: {score} {t.points}
+            </p>
           </div>
         )}
       </div>

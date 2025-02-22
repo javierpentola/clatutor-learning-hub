@@ -8,6 +8,60 @@ import { GameColumn } from "@/components/game/GameColumn";
 import { useGameLogic } from "@/hooks/useGameLogic";
 import { QAPair } from "@/types/game";
 
+const translations = {
+  en: {
+    loading: "Loading game...",
+    matchingGame: "Matching Game",
+    matchDescription: "Match questions with their correct answers",
+    score: "Score",
+    noQuestions: "No Questions Available",
+    noQuestionsYet: "This unit doesn't have any questions yet.",
+    questions: "Questions",
+    answers: "Answers",
+    back: "Back",
+    error: {
+      title: "Error",
+      noUnit: "No unit code provided",
+      notFound: "Unit not found",
+      loadFailed: "Failed to load the game"
+    }
+  },
+  es: {
+    loading: "Cargando juego...",
+    matchingGame: "Juego de Emparejamiento",
+    matchDescription: "Empareja las preguntas con sus respuestas correctas",
+    score: "Puntuación",
+    noQuestions: "No Hay Preguntas Disponibles",
+    noQuestionsYet: "Esta unidad aún no tiene preguntas.",
+    questions: "Preguntas",
+    answers: "Respuestas",
+    back: "Volver",
+    error: {
+      title: "Error",
+      noUnit: "No se proporcionó código de unidad",
+      notFound: "Unidad no encontrada",
+      loadFailed: "Error al cargar el juego"
+    }
+  },
+  vi: {
+    loading: "Đang tải trò chơi...",
+    matchingGame: "Trò chơi ghép đôi",
+    matchDescription: "Ghép câu hỏi với câu trả lời đúng",
+    score: "Điểm số",
+    noQuestions: "Không có câu hỏi",
+    noQuestionsYet: "Đơn vị này chưa có câu hỏi nào.",
+    questions: "Câu hỏi",
+    answers: "Câu trả lời",
+    back: "Quay lại",
+    error: {
+      title: "Lỗi",
+      noUnit: "Không có mã đơn vị",
+      notFound: "Không tìm thấy đơn vị",
+      loadFailed: "Không thể tải trò chơi"
+    }
+  }
+};
+
 const Combine = () => {
   const { code } = useParams();
   const navigate = useNavigate();
@@ -16,21 +70,35 @@ const Combine = () => {
   const [questions, setQuestions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<string[]>([]);
   const [pairs, setPairs] = useState<QAPair[]>([]);
+  const [language, setLanguage] = useState("en");
 
   const { matchState, setSessionId, handleItemClick } = useGameLogic(pairs);
 
   useEffect(() => {
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem("language") || "en";
+      setLanguage(newLang);
+    };
+
+    handleLanguageChange();
+    window.addEventListener("languageChange", handleLanguageChange);
+    return () => window.removeEventListener("languageChange", handleLanguageChange);
+  }, []);
+
+  const t = translations[language as keyof typeof translations];
+
+  useEffect(() => {
     if (!code) {
       toast({
-        title: "Error",
-        description: "No unit code provided",
+        title: t.error.title,
+        description: t.error.noUnit,
         variant: "destructive",
       });
       navigate("/");
       return;
     }
     loadGame();
-  }, [code]);
+  }, [code, language]);
 
   const loadGame = async () => {
     try {
@@ -50,8 +118,8 @@ const Combine = () => {
       if (!unitData) {
         console.log('No unit found for code:', code);
         toast({
-          title: "Error",
-          description: "Unit not found",
+          title: t.error.title,
+          description: t.error.notFound,
           variant: "destructive",
         });
         navigate("/");
@@ -73,8 +141,8 @@ const Combine = () => {
       if (!qaData || qaData.length === 0) {
         console.log('No questions found for unit:', unitData.id);
         toast({
-          title: "No questions found",
-          description: "This unit doesn't have any questions yet",
+          title: t.error.title,
+          description: t.error.loadFailed,
           variant: "destructive",
         });
         setLoading(false);
@@ -115,8 +183,8 @@ const Combine = () => {
     } catch (error) {
       console.error('Error loading game:', error);
       toast({
-        title: "Error",
-        description: "Failed to load the game",
+        title: t.error.title,
+        description: t.error.loadFailed,
         variant: "destructive",
       });
       setLoading(false);
@@ -126,7 +194,7 @@ const Combine = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading game...</div>
+        <div className="text-xl">{t.loading}</div>
       </div>
     );
   }
@@ -135,11 +203,11 @@ const Combine = () => {
     return (
       <div className="min-h-screen p-8">
         <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
         </Button>
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">No Questions Available</h2>
-          <p>This unit doesn't have any questions yet.</p>
+          <h2 className="text-2xl font-bold mb-4">{t.noQuestions}</h2>
+          <p>{t.noQuestionsYet}</p>
         </div>
       </div>
     );
@@ -148,29 +216,29 @@ const Combine = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       <Button onClick={() => navigate(-1)} variant="ghost" className="mb-8">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        <ArrowLeft className="mr-2 h-4 w-4" /> {t.back}
       </Button>
 
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Matching Game</h1>
+          <h1 className="text-3xl font-bold mb-2">{t.matchingGame}</h1>
           <p className="text-lg text-gray-600">
-            Match questions with their correct answers
+            {t.matchDescription}
           </p>
           <p className="text-xl font-medium mt-4">
-            Score: {matchState.score} / {pairs.length}
+            {t.score}: {matchState.score} / {pairs.length}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
           <GameColumn
-            title="Questions"
+            title={t.questions}
             items={questions}
             matchState={matchState}
             onItemClick={(item) => handleItemClick(item, true, questions, answers)}
           />
           <GameColumn
-            title="Answers"
+            title={t.answers}
             items={answers}
             matchState={matchState}
             onItemClick={(item) => handleItemClick(item, false, questions, answers)}
