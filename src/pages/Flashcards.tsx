@@ -77,14 +77,26 @@ const Flashcards = () => {
 
   const loadFlashcards = async () => {
     try {
-      // First get the unit by code, using maybeSingle() instead of single()
+      setLoading(true);
+      
+      // First get the unit by code
       const { data: unitData, error: unitError } = await supabase
         .from('units')
         .select('id, title')
         .eq('code', code)
         .maybeSingle();
 
-      if (unitError) throw unitError;
+      if (unitError) {
+        console.error('Error fetching unit:', unitError);
+        toast({
+          title: "Error",
+          description: "Failed to load unit",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       if (!unitData) {
         toast({
           title: "Error",
@@ -101,17 +113,24 @@ const Flashcards = () => {
         .select('id, question, answer')
         .eq('unit_id', unitData.id);
 
-      if (qaError) throw qaError;
-      if (!qaData || qaData.length === 0) {
+      if (qaError) {
+        console.error('Error fetching questions:', qaError);
         toast({
-          title: "No flashcards found",
-          description: "This unit doesn't have any flashcards yet",
+          title: "Error",
+          description: "Failed to load flashcards",
           variant: "destructive",
         });
+        setLoading(false);
         return;
       }
 
-      // Create or update the session - using a generated UUID for student_id temporarily
+      if (!qaData || qaData.length === 0) {
+        setCards([]);
+        setLoading(false);
+        return;
+      }
+
+      // Create or update the session
       const tempStudentId = crypto.randomUUID();
       const { data: sessionData, error: sessionError } = await supabase
         .from('flashcard_sessions')
@@ -125,9 +144,13 @@ const Flashcards = () => {
         .select()
         .single();
 
-      if (sessionError) throw sessionError;
-      
-      setSessionId(sessionData.id);
+      if (sessionError) {
+        console.error('Error creating session:', sessionError);
+        // Continue anyway as this is not critical
+      } else {
+        setSessionId(sessionData.id);
+      }
+
       setCards(qaData);
       setLoading(false);
     } catch (error) {
@@ -137,6 +160,7 @@ const Flashcards = () => {
         description: "Failed to load flashcards",
         variant: "destructive",
       });
+      setLoading(false);
     }
   };
 
@@ -189,14 +213,12 @@ const Flashcards = () => {
       </Button>
 
       <div className="max-w-3xl mx-auto">
-        {/* Progress indicator */}
         <div className="text-center mb-4">
           <p className="text-lg font-medium">
             {t.card} {currentCardIndex + 1} {t.of} {cards.length}
           </p>
         </div>
 
-        {/* Flashcard */}
         <div className="perspective-1000 relative h-[300px] mb-8 cursor-pointer select-none">
           <div
             className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${
@@ -204,19 +226,16 @@ const Flashcards = () => {
             }`}
             onClick={handleFlip}
           >
-            {/* Front of card */}
             <div className="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg p-8 flex items-center justify-center">
               <p className="text-2xl text-center">{cards[currentCardIndex].question}</p>
             </div>
 
-            {/* Back of card */}
             <div className="absolute w-full h-full backface-hidden [transform:rotateY(180deg)] bg-white rounded-xl shadow-lg p-8 flex items-center justify-center">
               <p className="text-2xl text-center">{cards[currentCardIndex].answer}</p>
             </div>
           </div>
         </div>
 
-        {/* Navigation buttons */}
         <div className="flex justify-center gap-4">
           <Button
             onClick={handlePrevious}
