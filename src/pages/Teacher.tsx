@@ -234,15 +234,28 @@ const Teacher = () => {
 
   const deleteUnit = useMutation({
     mutationFn: async (unitId: string) => {
-      console.log("Deleting unit:", unitId); // Debug log
-      const { error } = await supabase
+      console.log("Deleting unit:", unitId);
+      
+      // First delete all questions associated with the unit
+      const { error: questionsError } = await supabase
+        .from("questions_answers")
+        .delete()
+        .eq("unit_id", unitId);
+      
+      if (questionsError) {
+        console.error("Delete questions error:", questionsError);
+        throw questionsError;
+      }
+
+      // Then delete the unit itself
+      const { error: unitError } = await supabase
         .from("units")
         .delete()
         .eq("id", unitId);
       
-      if (error) {
-        console.error("Delete error:", error); // Debug log
-        throw error;
+      if (unitError) {
+        console.error("Delete unit error:", unitError);
+        throw unitError;
       }
     },
     onSuccess: () => {
@@ -254,7 +267,7 @@ const Teacher = () => {
       });
     },
     onError: (error: any) => {
-      console.error("Delete mutation error:", error); // Debug log
+      console.error("Delete mutation error:", error);
       setDeletingUnitId(null);
       toast({
         title: "Error",
