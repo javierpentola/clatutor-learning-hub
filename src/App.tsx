@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "./integrations/supabase/client";
 import { Toaster } from "@/components/ui/toaster";
+import { Navbar } from "@/components/Navbar";
 import Index from "./pages/Index";
 import Teacher from "./pages/Teacher";
 import About from "./pages/About";
@@ -56,6 +57,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
