@@ -79,6 +79,7 @@ const ExamSetup = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [hasQuestions, setHasQuestions] = useState(false);
   const [language, setLanguage] = useState("en");
+  const [totalQuestions, setTotalQuestions] = useState(0);
 
   useEffect(() => {
     const checkQuestions = async () => {
@@ -100,7 +101,9 @@ const ExamSetup = () => {
 
         if (questionsError) throw questionsError;
 
-        setHasQuestions(count ? count > 0 : false);
+        const questionCount = count || 0;
+        setHasQuestions(questionCount > 0);
+        setTotalQuestions(questionCount);
       } catch (error: any) {
         toast({
           title: translations[language as keyof typeof translations].errors.loadError,
@@ -145,7 +148,7 @@ const ExamSetup = () => {
   const startExam = async () => {
     const t = translations[language as keyof typeof translations];
 
-    if (!hasQuestions) {
+    if (!hasQuestions || totalQuestions === 0) {
       toast({
         title: "Error",
         description: t.errors.noQuestions,
@@ -175,6 +178,15 @@ const ExamSetup = () => {
 
       if (unitError) throw unitError;
 
+      if (!unitData) {
+        toast({
+          title: "Error",
+          description: t.errors.noUnit,
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Create a new exam session
       const tempStudentId = crypto.randomUUID();
       const { data: sessionData, error: sessionError } = await supabase
@@ -184,7 +196,8 @@ const ExamSetup = () => {
           student_id: tempStudentId,
           question_types: selectedTypes,
           unit_title: unitData.title,
-          unit_code: unitData.code
+          unit_code: unitData.code,
+          num_questions: Math.min(10, totalQuestions) // Limit to available questions
         })
         .select()
         .single();
@@ -236,6 +249,7 @@ const ExamSetup = () => {
                   id={id}
                   checked={selectedTypes.includes(id as QuestionType)}
                   onCheckedChange={() => handleTypeToggle(id as QuestionType)}
+                  disabled={!hasQuestions || totalQuestions === 0}
                 />
                 <Label htmlFor={id} className="text-base">{label}</Label>
               </div>
@@ -245,10 +259,16 @@ const ExamSetup = () => {
           <Button
             className="mt-8 w-full"
             onClick={startExam}
-            disabled={loading || selectedTypes.length === 0 || !hasQuestions}
+            disabled={loading || selectedTypes.length === 0 || !hasQuestions || totalQuestions === 0}
           >
             {loading ? t.settingUp : t.startExam}
           </Button>
+
+          {(!hasQuestions || totalQuestions === 0) && (
+            <p className="mt-4 text-red-500 text-center">
+              {t.errors.noQuestions}
+            </p>
+          )}
         </div>
       </div>
     </div>
