@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Pencil, Trash2, FolderPlus } from "lucide-react";
+import { DeleteUnitButton } from "@/components/units/DeleteUnitButton";
 
 const translations = {
   en: {
@@ -425,38 +426,9 @@ const Teacher = () => {
                   className="w-full"
                   onClick={() => navigate(`/unit/${unit.code}`)}
                 >
-                  {t.manageQA}
+                  Manage Questions & Answers
                 </Button>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      variant="destructive" 
-                      className="w-full"
-                      disabled={deletingUnitId === unit.id}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      {t.deleteUnit}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>{t.deleteUnit}</DialogTitle>
-                      <DialogDescription>{t.confirmDelete}</DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => {}}>
-                        {t.cancel}
-                      </Button>
-                      <Button 
-                        variant="destructive"
-                        onClick={() => handleDeleteUnit(unit.id)}
-                        disabled={deletingUnitId === unit.id}
-                      >
-                        {t.deleteUnit}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <DeleteUnitButton unitId={unit.id} />
               </div>
             </CardContent>
           </Card>
