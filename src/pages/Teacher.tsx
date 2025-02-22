@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -49,6 +48,8 @@ const translations = {
       unitUpdated: "Unit updated successfully",
       unitDeleted: "Unit deleted successfully",
     },
+    deleteUnit: "Delete Unit",
+    confirmDelete: "Are you sure you want to delete this unit?",
   },
   es: {
     title: "Mis Unidades",
@@ -72,6 +73,8 @@ const translations = {
       unitUpdated: "Unidad actualizada exitosamente",
       unitDeleted: "Unidad eliminada exitosamente",
     },
+    deleteUnit: "Eliminar Unidad",
+    confirmDelete: "¿Estás seguro de que quieres eliminar esta unidad?",
   },
   vi: {
     title: "Đơn vị của tôi",
@@ -95,6 +98,8 @@ const translations = {
       unitUpdated: "Cập nhật đơn vị thành công",
       unitDeleted: "Xóa đơn vị thành công",
     },
+    deleteUnit: "Xóa Đơn vị",
+    confirmDelete: "Bạn có chắc chắn muốn xóa đơn vị này không?",
   },
 };
 
@@ -423,14 +428,6 @@ const Teacher = () => {
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => handleDeleteUnit(unit.id)}
-                      disabled={deletingUnitId === unit.id}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               )}
@@ -447,6 +444,36 @@ const Teacher = () => {
                 >
                   {t.manageQA}
                 </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="destructive" 
+                      className="w-full"
+                      disabled={deletingUnitId === unit.id}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      {t.deleteUnit}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{t.deleteUnit}</DialogTitle>
+                      <DialogDescription>{t.confirmDelete}</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => {}}>
+                        {t.cancel}
+                      </Button>
+                      <Button 
+                        variant="destructive"
+                        onClick={() => handleDeleteUnit(unit.id)}
+                        disabled={deletingUnitId === unit.id}
+                      >
+                        {t.deleteUnit}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardContent>
           </Card>
