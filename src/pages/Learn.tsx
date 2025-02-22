@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -64,10 +63,12 @@ const QuizGame = () => {
     },
     enabled: !!code,
     retry: false,
-    onError: (error: Error) => {
-      toast(error.message || "Failed to load questions");
-      if (error.message === "Unit not found") {
-        navigate("/");
+    onSettled: (_data, error: Error | null) => {
+      if (error) {
+        toast(error.message || "Failed to load questions");
+        if (error.message === "Unit not found") {
+          navigate("/");
+        }
       }
     }
   });
