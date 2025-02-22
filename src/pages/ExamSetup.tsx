@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +27,8 @@ const translations = {
       noTypes: "Please select at least one question type",
       noQuestions: "This unit has no questions available",
       loadError: "Error loading unit data",
-      examError: "Error creating exam session"
+      examError: "Error creating exam session",
+      noUnit: "Unit not found"
     },
     loading: "Loading..."
   },
@@ -46,7 +46,8 @@ const translations = {
       noTypes: "Por favor selecciona al menos un tipo de pregunta",
       noQuestions: "Esta unidad no tiene preguntas disponibles",
       loadError: "Error al cargar los datos de la unidad",
-      examError: "Error al crear la sesión del examen"
+      examError: "Error al crear la sesión del examen",
+      noUnit: "Unidad no encontrada"
     },
     loading: "Cargando..."
   },
@@ -64,7 +65,8 @@ const translations = {
       noTypes: "Vui lòng chọn ít nhất một loại câu hỏi",
       noQuestions: "Đơn vị này không có câu hỏi",
       loadError: "Lỗi khi tải dữ liệu đơn vị",
-      examError: "Lỗi khi tạo phiên kiểm tra"
+      examError: "Lỗi khi tạo phiên kiểm tra",
+      noUnit: "Không tìm thấy đơn vị"
     },
     loading: "Đang tải..."
   }
@@ -84,7 +86,6 @@ const ExamSetup = () => {
   useEffect(() => {
     const checkQuestions = async () => {
       try {
-        // First get the unit ID
         const { data: unitData, error: unitError } = await supabase
           .from('units')
           .select('id')
@@ -93,7 +94,6 @@ const ExamSetup = () => {
 
         if (unitError) throw unitError;
 
-        // Then check if there are any questions
         const { count, error: questionsError } = await supabase
           .from('questions_answers')
           .select('*', { count: 'exact', head: true })
@@ -117,11 +117,9 @@ const ExamSetup = () => {
 
     checkQuestions();
 
-    // Get the current language
     const currentLang = localStorage.getItem("language") || "en";
     setLanguage(currentLang);
 
-    // Listen for language changes
     const handleLanguageChange = () => {
       const newLang = localStorage.getItem("language") || "en";
       setLanguage(newLang);
@@ -169,7 +167,6 @@ const ExamSetup = () => {
     try {
       setLoading(true);
 
-      // Get the unit ID and title first
       const { data: unitData, error: unitError } = await supabase
         .from('units')
         .select('id, title, code')
@@ -187,7 +184,6 @@ const ExamSetup = () => {
         return;
       }
 
-      // Create a new exam session
       const tempStudentId = crypto.randomUUID();
       const { data: sessionData, error: sessionError } = await supabase
         .from('exam_sessions')
@@ -197,14 +193,13 @@ const ExamSetup = () => {
           question_types: selectedTypes,
           unit_title: unitData.title,
           unit_code: unitData.code,
-          num_questions: Math.min(10, totalQuestions) // Limit to available questions
+          num_questions: Math.min(10, totalQuestions)
         })
         .select()
         .single();
 
       if (sessionError) throw sessionError;
 
-      // Navigate to the exam with the session ID
       navigate(`/student/${code}/exam/${sessionData.id}`);
     } catch (error: any) {
       toast({
