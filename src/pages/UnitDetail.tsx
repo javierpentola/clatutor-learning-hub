@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,69 @@ import {
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
+const translations = {
+  en: {
+    backToUnits: "Back to Units",
+    addQA: "Add Question & Answer",
+    addQADescription: "Add a new question and answer to this unit.",
+    question: "Question",
+    answer: "Answer",
+    enterQuestion: "Enter the question",
+    enterAnswer: "Enter the answer",
+    cancel: "Cancel",
+    add: "Add",
+    loading: "Loading...",
+    success: {
+      qaAdded: "Question and answer added successfully",
+      qaDeleted: "Question and answer deleted successfully"
+    },
+    error: {
+      qaRequired: "Both question and answer are required",
+      noUnit: "No unit found"
+    }
+  },
+  es: {
+    backToUnits: "Volver a Unidades",
+    addQA: "Añadir Pregunta y Respuesta",
+    addQADescription: "Añade una nueva pregunta y respuesta a esta unidad.",
+    question: "Pregunta",
+    answer: "Respuesta",
+    enterQuestion: "Ingresa la pregunta",
+    enterAnswer: "Ingresa la respuesta",
+    cancel: "Cancelar",
+    add: "Añadir",
+    loading: "Cargando...",
+    success: {
+      qaAdded: "Pregunta y respuesta añadidas exitosamente",
+      qaDeleted: "Pregunta y respuesta eliminadas exitosamente"
+    },
+    error: {
+      qaRequired: "La pregunta y la respuesta son requeridas",
+      noUnit: "No se encontró la unidad"
+    }
+  },
+  vi: {
+    backToUnits: "Quay lại Đơn vị",
+    addQA: "Thêm Câu hỏi & Đáp án",
+    addQADescription: "Thêm câu hỏi và đáp án mới cho đơn vị này.",
+    question: "Câu hỏi",
+    answer: "Đáp án",
+    enterQuestion: "Nhập câu hỏi",
+    enterAnswer: "Nhập đáp án",
+    cancel: "Hủy",
+    add: "Thêm",
+    loading: "Đang tải...",
+    success: {
+      qaAdded: "Thêm câu hỏi và đáp án thành công",
+      qaDeleted: "Xóa câu hỏi và đáp án thành công"
+    },
+    error: {
+      qaRequired: "Cần có cả câu hỏi và đáp án",
+      noUnit: "Không tìm thấy đơn vị"
+    }
+  }
+};
+
 type Unit = {
   id: string;
   title: string;
@@ -49,8 +112,22 @@ const UnitDetail = () => {
   const [isAddQAOpen, setIsAddQAOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [language, setLanguage] = useState("en");
 
-  const { data: unit } = useQuery({
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem("language") || "en";
+      setLanguage(newLang);
+    };
+
+    handleLanguageChange();
+    window.addEventListener("languageChange", handleLanguageChange);
+    return () => window.removeEventListener("languageChange", handleLanguageChange);
+  }, []);
+
+  const t = translations[language as keyof typeof translations];
+
+  const { data: unit, isLoading } = useQuery({
     queryKey: ["unit", code],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -83,7 +160,7 @@ const UnitDetail = () => {
 
   const addQuestionAnswer = useMutation({
     mutationFn: async () => {
-      if (!unit?.id) throw new Error("No unit found");
+      if (!unit?.id) throw new Error(t.error.noUnit);
       
       const { error } = await supabase.from("questions_answers").insert([
         {
@@ -101,7 +178,7 @@ const UnitDetail = () => {
       setAnswer("");
       toast({
         title: "Success",
-        description: "Question and answer added successfully",
+        description: t.success.qaAdded,
       });
     },
     onError: (error: any) => {
@@ -125,7 +202,7 @@ const UnitDetail = () => {
       queryClient.invalidateQueries({ queryKey: ["questions_answers", unit?.id] });
       toast({
         title: "Success",
-        description: "Question and answer deleted successfully",
+        description: t.success.qaDeleted,
       });
     },
     onError: (error: any) => {
@@ -141,13 +218,21 @@ const UnitDetail = () => {
     if (!question || !answer) {
       toast({
         title: "Error",
-        description: "Both question and answer are required",
+        description: t.error.qaRequired,
         variant: "destructive",
       });
       return;
     }
     addQuestionAnswer.mutate();
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center">{t.loading}</div>
+      </div>
+    );
+  }
 
   if (!unit) return null;
 
@@ -159,7 +244,7 @@ const UnitDetail = () => {
         onClick={() => navigate("/teacher")}
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Units
+        {t.backToUnits}
       </Button>
 
       <div className="mb-8">
@@ -179,41 +264,39 @@ const UnitDetail = () => {
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Question & Answer
+              {t.addQA}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Question & Answer</DialogTitle>
-              <DialogDescription>
-                Add a new question and answer to this unit.
-              </DialogDescription>
+              <DialogTitle>{t.addQA}</DialogTitle>
+              <DialogDescription>{t.addQADescription}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="question">Question</Label>
+                <Label htmlFor="question">{t.question}</Label>
                 <Textarea
                   id="question"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Enter the question"
+                  placeholder={t.enterQuestion}
                 />
               </div>
               <div>
-                <Label htmlFor="answer">Answer</Label>
+                <Label htmlFor="answer">{t.answer}</Label>
                 <Textarea
                   id="answer"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Enter the answer"
+                  placeholder={t.enterAnswer}
                 />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddQAOpen(false)}>
-                Cancel
+                {t.cancel}
               </Button>
-              <Button onClick={handleAddQA}>Add</Button>
+              <Button onClick={handleAddQA}>{t.add}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -225,7 +308,7 @@ const UnitDetail = () => {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle>Question</CardTitle>
+                  <CardTitle>{t.question}</CardTitle>
                   <CardDescription className="mt-2">{qa.question}</CardDescription>
                 </div>
                 <Button
@@ -239,7 +322,7 @@ const UnitDetail = () => {
             </CardHeader>
             <CardContent>
               <div>
-                <h4 className="font-semibold mb-2">Answer</h4>
+                <h4 className="font-semibold mb-2">{t.answer}</h4>
                 <p className="text-muted-foreground">{qa.answer}</p>
               </div>
             </CardContent>
