@@ -28,7 +28,6 @@ const translations = {
 };
 
 export const Navbar = () => {
-  const [currentLanguage, setCurrentLanguage] = useState("English");
   const [language, setLanguage] = useState("en");
 
   const languages = [
@@ -49,6 +48,7 @@ export const Navbar = () => {
   }, []);
 
   const t = translations[language as keyof typeof translations];
+  const currentLanguageName = languages.find(lang => lang.code === language)?.name || "English";
 
   return (
     <nav className="bg-white shadow-lg border-b-2 border-[#1a365d] mb-8">
@@ -84,20 +84,20 @@ export const Navbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md">
                 <Globe className="w-5 h-5 mr-2" />
-                <span>{currentLanguage}</span>
+                <span>{currentLanguageName}</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {languages.map((language) => (
+                {languages.map((lang) => (
                   <DropdownMenuItem
-                    key={language.code}
+                    key={lang.code}
                     onClick={() => {
-                      setCurrentLanguage(language.name);
-                      localStorage.setItem("language", language.code);
+                      setLanguage(lang.code);
+                      localStorage.setItem("language", lang.code);
                       window.dispatchEvent(new Event("languageChange"));
                     }}
                     className="cursor-pointer"
                   >
-                    {language.name}
+                    {lang.name}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
